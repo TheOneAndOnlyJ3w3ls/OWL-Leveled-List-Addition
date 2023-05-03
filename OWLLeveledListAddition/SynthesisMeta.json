@@ -1,0 +1,8 @@
+{
+  "Nickname": "OWLLeveledListAddition",
+  "Visibility": "Visible",
+  "OneLineDescription": "Allows adding weapons and armors to Open World Loot leveled lists automatically, based on keywords.",
+  "LongDescription": "Allows adding weapons and armors to Open World Loot leveled lists automatically, based on keywords. Can automatically create sublists",
+  "PreferredAutoVersioning": "Default",
+  "RequiredMods": []
+}

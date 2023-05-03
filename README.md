@@ -1,8 +1,5 @@
-# Silver Weapon Keywords
-Adds the WeapMaterialSilver keyword to weapons made or tempered with it.
+# OWL Leveled List Addition
+Allows adding weapons and armors to Open World Loot leveled lists automatically, based on keywords.
 
-
-Optionally able to search by EditorID.
-
-Optionally able to treat Quicksilver the same as Silver.
+Automatically able to create sublists for mods that have more than a certain amount of items, so as not to overload OWL leveled lists.
 
