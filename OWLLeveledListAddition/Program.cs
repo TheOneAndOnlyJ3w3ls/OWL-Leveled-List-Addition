@@ -223,93 +223,101 @@ namespace OWLLeveledListAddition
 
                 count1++;
             }
+            System.Console.WriteLine("Done with Weapons!");
 
-            System.Console.WriteLine("Done with Weapons, onto armors...");
 
-            // Iterate on all weapons
-            foreach (var armourGetter in state.LoadOrder.PriorityOrder.WinningOverrides<IArmorGetter>())
+            if (Settings.DoArmours)
             {
-                // Ignore no keywords
-                if (armourGetter.Keywords is null) continue;
-
-                // Ignore enchanted
-                if (!armourGetter.ObjectEffect.IsNull) continue;
-
-                // Ignore clothing
-                if (armourGetter.HasKeyword(Skyrim.Keyword.VendorItemClothing)) continue;
-
-                string material = "";
-                string type = "";
-
-                // Search all keywords
-                foreach (var keyword in armourGetter.Keywords)
+                System.Console.WriteLine("Retrieving armors...");
+                // Iterate on all weapons
+                foreach (var armourGetter in state.LoadOrder.PriorityOrder.WinningOverrides<IArmorGetter>())
                 {
-                    if (armorMaterialKeywords.Contains(keyword))
+                    // Ignore no keywords
+                    if (armourGetter.Keywords is null) continue;
+
+                    // Ignore daedric artifacts
+                    if (!armourGetter.HasKeyword(Skyrim.Keyword.VendorItemDaedricArtifact)) continue;
+
+                    // Ignore enchanted
+                    if (!armourGetter.ObjectEffect.IsNull) continue;
+
+                    // Ignore clothing
+                    if (armourGetter.HasKeyword(Skyrim.Keyword.VendorItemClothing)) continue;
+
+                    string material = "";
+                    string type = "";
+
+                    // Search all keywords
+                    foreach (var keyword in armourGetter.Keywords)
                     {
-                        var kw = keyword.TryResolve(state.LinkCache);
-                        if (kw is null || kw.EditorID is null) continue;
+                        if (armorMaterialKeywords.Contains(keyword))
+                        {
+                            var kw = keyword.TryResolve(state.LinkCache);
+                            if (kw is null || kw.EditorID is null) continue;
 
-                        material = kw.EditorID.Replace("ArmorMaterial", "").Replace("DLC2ArmorMaterial", "").Replace("DLC1ArmorMaterial", "");
+                            material = kw.EditorID.Replace("ArmorMaterial", "").Replace("DLC2ArmorMaterial", "").Replace("DLC1ArmorMaterial", "");
+                        }
+                        else if (armorTypeKeywords.Contains(keyword))
+                        {
+                            var kw = keyword.TryResolve(state.LinkCache);
+                            if (kw is null || kw.EditorID is null) continue;
+
+                            type = kw.EditorID.Replace("Armor", "").Replace("VendorItem", "");
+                        }
                     }
-                    else if (armorTypeKeywords.Contains(keyword))
+
+                    if (material == "" || type == "")
                     {
-                        var kw = keyword.TryResolve(state.LinkCache);
-                        if (kw is null || kw.EditorID is null) continue;
-
-                        type = kw.EditorID.Replace("Armor", "").Replace("VendorItem", "");
+                        //System.Console.WriteLine("> keywords not found: " + material + "/" + type);
+                        continue;
                     }
-                }
 
-                if (material == "" || type == "")
-                {
-                    //System.Console.WriteLine("> keywords not found: " + material + "/" + type);
-                    continue;
-                }
+                    //System.Console.WriteLine("> keywords found ");
 
-                //System.Console.WriteLine("> keywords found ");
+                    // Form the keys for the dictionaries
+                    string key = material + "_" + type;
+                    var tuple = new Tuple<ModKey, string>(armourGetter.FormKey.ModKey, key.ToLower());
 
-                // Form the keys for the dictionaries
-                string key = material + "_" + type;
-                var tuple = new Tuple<ModKey, string>(armourGetter.FormKey.ModKey, key.ToLower());
-
-                // Create a new leveled item entry
-                LeveledItemEntry entry = new()
-                {
-                    Data = new()
+                    // Create a new leveled item entry
+                    LeveledItemEntry entry = new()
                     {
-                        Count = 1,
-                        Level = 1,
-                        Reference = new FormLink<IWeaponGetter>(armourGetter.FormKey)
+                        Data = new()
+                        {
+                            Count = 1,
+                            Level = 1,
+                            Reference = new FormLink<IWeaponGetter>(armourGetter.FormKey)
+                        }
+                    };
+
+                    // Add the new entry in the mod-dependent dictionary
+                    leveledItemsToAddPerMod.TryGetValue(tuple, out var entryList);
+                    if (entryList is null)
+                    {
+                        // new lvlentry
+                        leveledItemsToAddPerMod.Add(tuple, new HashSet<LeveledItemEntry>() { entry });
                     }
-                };
+                    else
+                    {
+                        if (!entryList.Contains(entry))
+                            entryList.Add(entry);
+                    }
 
-                // Add the new entry in the mod-dependent dictionary
-                leveledItemsToAddPerMod.TryGetValue(tuple, out var entryList);
-                if (entryList is null)
-                {
-                    // new lvlentry
-                    leveledItemsToAddPerMod.Add(tuple, new HashSet<LeveledItemEntry>() { entry });
-                }
-                else
-                {
-                    if (!entryList.Contains(entry))
-                        entryList.Add(entry);
-                }
+                    // Add the entry also to the mod-independent dictionary
+                    leveledItemsToAdd.TryGetValue(key, out var hash);
+                    if (hash is null)
+                    {
+                        leveledItemsToAdd.TryAdd(key, new HashSet<LeveledItemEntry>() { entry });
+                    }
+                    else
+                    {
+                        hash.Add(entry);
+                    }
 
-                // Add the entry also to the mod-independent dictionary
-                leveledItemsToAdd.TryGetValue(key, out var hash);
-                if (hash is null)
-                {
-                    leveledItemsToAdd.TryAdd(key, new HashSet<LeveledItemEntry>() { entry });
+                    count2++;
                 }
-                else
-                {
-                    hash.Add(entry);
-                }
-
-                count2++;
+                System.Console.WriteLine("Done with Armors!");
             }
-            System.Console.WriteLine("Done with Armors!");
+            
 
             // Iterate on the mod-dependent dictionary, to create new leveled lists for the bigger ones
             System.Console.WriteLine("Creating new leveled lists...");
