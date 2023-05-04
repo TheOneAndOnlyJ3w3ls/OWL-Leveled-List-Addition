@@ -148,6 +148,10 @@ namespace OWLLeveledListAddition
                 // Ignore enchanted
                 if (!weaponGetter.ObjectEffect.IsNull) continue;
 
+                // Ignore daedric artifacts
+                if (!weaponGetter.HasKeyword(Skyrim.Keyword.VendorItemDaedricArtifact)) continue;
+
+
                 string material = "";
                 string type = "";
 
