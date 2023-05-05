@@ -151,6 +151,7 @@ namespace OWLLeveledListAddition
                 Skyrim.Keyword.ArmorCuirass,
                 Skyrim.Keyword.ArmorShield,
                 Skyrim.Keyword.ArmorGauntlets,
+                Skyrim.Keyword.ArmorHelmet,
                 Skyrim.Keyword.WeapTypeBow
             };
 
@@ -371,7 +372,6 @@ namespace OWLLeveledListAddition
                         //System.Console.WriteLine("> keywords not found: " + material + "/" + type);
                         continue;
                     }
-
                     //System.Console.WriteLine("> keywords found ");
 
                     // Form the keys for the dictionaries
@@ -385,7 +385,7 @@ namespace OWLLeveledListAddition
                         {
                             Count = 1,
                             Level = 1,
-                            Reference = new FormLink<IWeaponGetter>(armourGetter.FormKey)
+                            Reference = new FormLink<IArmorGetter>(armourGetter.FormKey)
                         }
                     };
 
