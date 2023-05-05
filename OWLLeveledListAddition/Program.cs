@@ -167,8 +167,20 @@ namespace OWLLeveledListAddition
             // Create a mod-dependent list of entries to add to the OWL lists
             Dictionary<Tuple<ModKey, string>, HashSet<LeveledItemEntry>> leveledItemsToAddPerMod = new();
 
+
+            // Ignore vanilla
+            var loadorder = state.LoadOrder.PriorityOrder;
+            if (Settings.IgnoreVanilla)
+            {
+                loadorder = state.LoadOrder.PriorityOrder.Where(x => !x.ModKey.Equals(Skyrim.ModKey)
+                                                                    && !x.ModKey.Equals(Update.ModKey)
+                                                                    && !x.ModKey.Equals(Dawnguard.ModKey)
+                                                                    && !x.ModKey.Equals(HearthFires.ModKey)
+                                                                    && !x.ModKey.Equals(Dragonborn.ModKey));
+            }
+
             // Iterate on all weapons
-            foreach (var weaponGetter in state.LoadOrder.PriorityOrder.WinningOverrides<IWeaponGetter>())
+            foreach (var weaponGetter in loadorder.WinningOverrides<IWeaponGetter>())
             {
                 // Ignore no keywords
                 if (weaponGetter.Keywords is null) continue;
@@ -178,6 +190,12 @@ namespace OWLLeveledListAddition
 
                 // Ignore daedric artifacts
                 if (weaponGetter.HasKeyword(Skyrim.Keyword.VendorItemDaedricArtifact)) continue;
+
+                // Ignore non playable
+                if (weaponGetter.Data is not null && weaponGetter.Data.Flags.HasFlag(WeaponData.Flag.NonPlayable)) continue;
+
+                // Ignore can't drop
+                if (weaponGetter.Data is not null && weaponGetter.Data.Flags.HasFlag(WeaponData.Flag.CantDrop)) continue;
 
 
                 string material = "";
@@ -308,7 +326,7 @@ namespace OWLLeveledListAddition
             {
                 System.Console.WriteLine("Retrieving armors...");
                 // Iterate on all weapons
-                foreach (var armourGetter in state.LoadOrder.PriorityOrder.WinningOverrides<IArmorGetter>())
+                foreach (var armourGetter in loadorder.WinningOverrides<IArmorGetter>())
                 {
                     // Ignore no keywords
                     if (armourGetter.Keywords is null) continue;
@@ -321,6 +339,10 @@ namespace OWLLeveledListAddition
 
                     // Ignore clothing
                     if (armourGetter.HasKeyword(Skyrim.Keyword.VendorItemClothing)) continue;
+
+                    // Ignore non playable
+                    if (armourGetter.MajorFlags.HasFlag(Armor.MajorFlag.NonPlayable)) continue;
+
 
                     string material = "";
                     string type = "";

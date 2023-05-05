@@ -11,6 +11,11 @@ namespace OWLLeveledListAddition
 {
     public class Settings
     {
+        //public List<FormLink>
+        [SettingName("Ignore Vanilla")]
+        [Tooltip("Ignore Vanilla weapons and armours")]
+        public bool IgnoreVanilla = true;
+
         [SettingName("Populate Armour leveled lists")]
         [Tooltip("Will populate weapons AND armours into OWL leveled lists")]
         public bool DoArmours = true;
