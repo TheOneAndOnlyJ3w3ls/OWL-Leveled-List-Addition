@@ -211,10 +211,10 @@ namespace OWLLeveledListAddition
                 }
 
                 // Add the entry also to the mod-independent dictionary
-                leveledItemsToAdd.TryGetValue(key, out var hash);
+                leveledItemsToAdd.TryGetValue(key.ToLower(), out var hash);
                 if(hash is null)
                 {
-                    leveledItemsToAdd.TryAdd(key, new HashSet<LeveledItemEntry>() { entry });
+                    leveledItemsToAdd.TryAdd(key.ToLower(), new HashSet<LeveledItemEntry>() { entry });
                 }
                 else
                 {
@@ -303,10 +303,10 @@ namespace OWLLeveledListAddition
                     }
 
                     // Add the entry also to the mod-independent dictionary
-                    leveledItemsToAdd.TryGetValue(key, out var hash);
+                    leveledItemsToAdd.TryGetValue(key.ToLower(), out var hash);
                     if (hash is null)
                     {
-                        leveledItemsToAdd.TryAdd(key, new HashSet<LeveledItemEntry>() { entry });
+                        leveledItemsToAdd.TryAdd(key.ToLower(), new HashSet<LeveledItemEntry>() { entry });
                     }
                     else
                     {
@@ -407,7 +407,7 @@ namespace OWLLeveledListAddition
                     string key = material + "_" + type;
 
                     // Get the items to add to the list
-                    leveledItemsToAdd.TryGetValue(key, out var hash);
+                    leveledItemsToAdd.TryGetValue(key.ToLower(), out var hash);
                     if (hash is null) continue;
 
                     // Get the leveled list
