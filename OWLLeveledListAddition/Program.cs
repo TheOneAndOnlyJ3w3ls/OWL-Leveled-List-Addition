@@ -149,7 +149,7 @@ namespace OWLLeveledListAddition
                 if (!weaponGetter.ObjectEffect.IsNull) continue;
 
                 // Ignore daedric artifacts
-                if (!weaponGetter.HasKeyword(Skyrim.Keyword.VendorItemDaedricArtifact)) continue;
+                if (weaponGetter.HasKeyword(Skyrim.Keyword.VendorItemDaedricArtifact)) continue;
 
 
                 string material = "";
@@ -236,7 +236,7 @@ namespace OWLLeveledListAddition
                     if (armourGetter.Keywords is null) continue;
 
                     // Ignore daedric artifacts
-                    if (!armourGetter.HasKeyword(Skyrim.Keyword.VendorItemDaedricArtifact)) continue;
+                    if (armourGetter.HasKeyword(Skyrim.Keyword.VendorItemDaedricArtifact)) continue;
 
                     // Ignore enchanted
                     if (!armourGetter.ObjectEffect.IsNull) continue;
