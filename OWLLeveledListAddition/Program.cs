@@ -76,6 +76,16 @@ namespace OWLLeveledListAddition
 
             System.Console.WriteLine("'Open World Loot.esp' found");
 
+            // check if Legacy of the Dragonborn is there
+            var DBMesm = "LegacyoftheDragonborn.esm";
+            var DBM = ModKey.FromFileName(DBMesm);
+            //var OWL = (Mods.Count > 0) ? state.LoadOrder[Mods.First()].Mod : null;
+
+            if (!DBM.IsNull)
+            {
+                System.Console.WriteLine("Legacy of the dragonborn was found! It will be ignored!");
+            }
+
 
             HashSet<IFormLinkGetter<IKeywordGetter>> weaponMaterialKeywords = new()
             {
@@ -198,6 +208,8 @@ namespace OWLLeveledListAddition
                 // Ignore can't drop
                 if (weaponGetter.Data is not null && weaponGetter.Data.Flags.HasFlag(WeaponData.Flag.CantDrop)) continue;
 
+                // Ignore Legacy of the dragonborn items
+                if (!DBM.IsNull && weaponGetter.FormKey.ModKey.Equals(DBM)) continue;
 
                 string material = "";
                 string type = "";
@@ -343,6 +355,9 @@ namespace OWLLeveledListAddition
 
                     // Ignore non playable
                     if (armourGetter.MajorFlags.HasFlag(Armor.MajorFlag.NonPlayable)) continue;
+
+                    // Ignore Legacy of the dragonborn items
+                    if (!DBM.IsNull && armourGetter.FormKey.ModKey.Equals(DBM)) continue;
 
 
                     string material = "";

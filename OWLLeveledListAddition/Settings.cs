@@ -13,7 +13,7 @@ namespace OWLLeveledListAddition
     {
         //public List<FormLink>
         [SettingName("Ignore Vanilla")]
-        [Tooltip("Ignore Vanilla weapons and armours")]
+        [Tooltip("Ignore Skyrim and DLCs weapons and armours (which OWL already handled)")]
         public bool IgnoreVanilla = true;
 
         [SettingName("Populate Armour leveled lists")]
