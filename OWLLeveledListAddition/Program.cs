@@ -34,6 +34,34 @@ namespace OWLLeveledListAddition
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
+            string GetSpecialTypeFromKeywords(IWeaponGetter wpn)
+            {
+                string type = "";
+
+                if (wpn.HasKeyword(Skyrim.Keyword.WeapTypeDagger)
+                    || wpn.HasKeyword(Skyrim.Keyword.WeapTypeSword)
+                    || wpn.HasKeyword(Skyrim.Keyword.WeapTypeMace)
+                    || wpn.HasKeyword(Skyrim.Keyword.WeapTypeWarAxe))
+                {
+                    type = "1H";
+                }
+                else if (wpn.HasKeyword(Skyrim.Keyword.WeapTypeWarhammer)
+                        || wpn.HasKeyword(Skyrim.Keyword.WeapTypeBattleaxe)
+                        || wpn.HasKeyword(Skyrim.Keyword.WeapTypeGreatsword))
+                {
+                    type = "2H";
+                }
+                else if (wpn.HasKeyword(Skyrim.Keyword.WeapTypeBow))
+                {
+                    type = "Bow";
+                }
+                else if (wpn.HasKeyword(Skyrim.Keyword.VendorItemArrow))
+                {
+                    type = "Arrow";
+                }
+
+                return type;
+            }
 
             // Get OWL main
             var OWLesp = "Open World Loot.esp";
@@ -155,32 +183,82 @@ namespace OWLLeveledListAddition
                 string material = "";
                 string type = "";
 
-                // Search all keywords
-                foreach (var keyword in weaponGetter.Keywords)
+                // Dawnguard
+                if (weaponGetter.HasKeyword(Dawnguard.Keyword.DLC1DawnguardItem))
                 {
-                    if (weaponMaterialKeywords.Contains(keyword))
-                    {
-                        var kw = keyword.TryResolve(state.LinkCache);
-                        if (kw is null || kw.EditorID is null) continue;
+                    material = "Dawnguard";
 
-                        material = kw.EditorID.Replace("WeapMaterial", "").Replace("DLC2WeaponMaterial", "");
-                    }
-                    else if (weaponTypeKeywords.Contains(keyword))
-                    {
-                        var kw = keyword.TryResolve(state.LinkCache);
-                        if (kw is null || kw.EditorID is null) continue;
+                    type = GetSpecialTypeFromKeywords(weaponGetter);
+                }
+                // Silver
+                else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialSilver))
+                {
+                    material = "Silver";
 
-                        type = kw.EditorID.Replace("WeapType", "").Replace("VendorItem", "");
-                    }
+                    type = GetSpecialTypeFromKeywords(weaponGetter);
+                }
+                // Draugr 
+                else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialDraugr))
+                {
+                    material = "Draugr";
+
+                    type = GetSpecialTypeFromKeywords(weaponGetter);
+                }
+                // Draugr Honed
+                else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialDraugrHoned))
+                {
+                    material = "DraugrNordHero";
+
+                    type = GetSpecialTypeFromKeywords(weaponGetter);
+                }
+                // Forsworn
+                else if (weaponGetter.EditorID is not null && weaponGetter.EditorID.Contains("forsworn", StringComparison.OrdinalIgnoreCase))
+                {
+                    material = "Forsworn";
+
+                    type = GetSpecialTypeFromKeywords(weaponGetter);
+                }
+                // Imperial
+                else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialImperial)
+                    || (weaponGetter.EditorID is not null && weaponGetter.EditorID.Contains("imperial", StringComparison.OrdinalIgnoreCase)))
+                {
+                    material = "Imperial";
+
+                    type = GetSpecialTypeFromKeywords(weaponGetter);
                 }
 
+                else
+                {
+                    // Search all keywords
+                    foreach (var keyword in weaponGetter.Keywords)
+                    {
+                        if (weaponMaterialKeywords.Contains(keyword))
+                        {
+                            var kw = keyword.TryResolve(state.LinkCache);
+                            if (kw is null || kw.EditorID is null) continue;
+
+                            material = kw.EditorID.Replace("WeapMaterial", "").Replace("DLC2WeaponMaterial", "").Replace("DLC1WeapMaterial","");
+                        }
+                        else if (weaponTypeKeywords.Contains(keyword))
+                        {
+                            var kw = keyword.TryResolve(state.LinkCache);
+                            if (kw is null || kw.EditorID is null) continue;
+
+                            type = kw.EditorID.Replace("WeapType", "").Replace("VendorItem", "");
+                        }
+                    }
+
+                }
+
+                // Ignore if either the material or the type is null
                 if (material == "" || type == "")
                 {
                     //System.Console.WriteLine("> keywords not found: " + material + "/" + type);
                     continue;
                 }
 
-                //System.Console.WriteLine("> keywords found ");
+                if(Settings.Debug)
+                    System.Console.WriteLine("> keywords found ");
                 
                 // Form the keys for the dictionaries
                 string key = material + "_" + type;

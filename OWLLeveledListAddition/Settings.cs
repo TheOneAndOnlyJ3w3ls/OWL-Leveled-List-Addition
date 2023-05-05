@@ -12,7 +12,7 @@ namespace OWLLeveledListAddition
     public class Settings
     {
         [SettingName("Populate Armour leveled lists")]
-        [Tooltip("Will populate weapons and armours into OWL leveled lists")]
+        [Tooltip("Will populate weapons AND armours into OWL leveled lists")]
         public bool DoArmours = true;
 
         [SettingName("Maximum items per mod for sublist: ")]
