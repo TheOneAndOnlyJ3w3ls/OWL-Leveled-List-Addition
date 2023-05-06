@@ -717,12 +717,12 @@ namespace OWLLeveledListAddition
                     count3++;
                 }
             }
-            System.Console.WriteLine("Created" + count3 + " new leveled lists!");
+            System.Console.WriteLine("Created " + count3 + " new leveled lists!");
 
 
             // Iterate on OWL leveled lists
             System.Console.WriteLine("Starting to fill the OWL leveled lists...");
-            foreach (var lvlListGetter in state.LoadOrder.PriorityOrder.Where(x => x.ModKey.Equals(OWL)).WinningOverrides<ILeveledItemGetter>())
+            foreach (var lvlListGetter in state.LoadOrder.PriorityOrder.Where(x => x.ModKey.Equals(OWL.ModKey)).WinningOverrides<ILeveledItemGetter>())
             {
                 if (lvlListGetter.EditorID is null) continue;
 
