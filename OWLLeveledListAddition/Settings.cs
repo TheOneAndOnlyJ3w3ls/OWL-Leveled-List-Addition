@@ -1,4 +1,5 @@
 using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.WPF.Reflection.Attributes;
 using System;
@@ -27,6 +28,20 @@ namespace OWLLeveledListAddition
         [SettingName("Debug setting")]
         [Tooltip("Enables additional info to be printed out, leave unticked")]
         public bool Debug = false;
+
+
+
+        [SettingName("Blacklisted mods")]
+        [Tooltip("These mods will be ignored by the patcher")]
+        public HashSet<ModKey> BlacklistedMods = new() { ModKey.FromNameAndExtension("LegacyoftheDragonborn.esm") };
+
+        [SettingName("Blacklisted weapons")]
+        [Tooltip("These weapons will NOT be added into OWL leveled lists")]
+        public HashSet<FormLink<IWeaponGetter>> BlacklistedWeapons = new();
+
+        [SettingName("Blacklisted armours")]
+        [Tooltip("These armours will NOT be added into OWL leveled lists")]
+        public HashSet<FormLink<IWeaponGetter>> BlacklistedArmours = new();
 
     }
 }

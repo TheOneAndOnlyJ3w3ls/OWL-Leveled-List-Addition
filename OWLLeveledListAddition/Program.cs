@@ -17,9 +17,194 @@ using static Mutagen.Bethesda.Skyrim.Furniture;
 namespace OWLLeveledListAddition
 {
 
-
 	public class Program
     {
+        public static HashSet<FormKey> ArmourBlacklist { get; set; } = new()
+        {
+             Skyrim.Armor.ArmorAstrid.FormKey
+        };
+
+        public static HashSet<FormKey> WeaponBlacklist { get; set; } = new()
+        {
+            Skyrim.Weapon.FavorAmrenIronSword.FormKey,
+            Skyrim.Weapon.FavorGhorbashAxe.FormKey,
+            Skyrim.Weapon.FavorNelacarStaffFear.FormKey,
+            Skyrim.Weapon.FavorOengulSword.FormKey,
+            Skyrim.Weapon.dunAngisBow.FormKey,
+            Skyrim.Weapon.dunAnsilvundGhostblade.FormKey,
+            Skyrim.Weapon.dunBlindCliffStaffReward.FormKey,
+            Skyrim.Weapon.dunBloatedMansKatana.FormKey,
+            Skyrim.Weapon.dunBluePalaceWabbajack.FormKey,
+            Skyrim.Weapon.dunClearspringTarnBowOfHunt.FormKey,
+            Skyrim.Weapon.dunCrystalDriftCaveStaff.FormKey,
+            Skyrim.Weapon.dunDarklightSilviaStaff.FormKey,
+            Skyrim.Weapon.dunFolgunthurMikrulSword02.FormKey,
+            Skyrim.Weapon.dunFolgunthurMikrulSword03.FormKey,
+            Skyrim.Weapon.dunFolgunthurMikrulSword04.FormKey,
+            Skyrim.Weapon.dunFolgunthurMikrulSword05.FormKey,
+            Skyrim.Weapon.dunFolgunthurMikrulSword06.FormKey,
+            Skyrim.Weapon.dunFrostmereCryptPaleBlade01.FormKey,
+            Skyrim.Weapon.dunFrostmereCryptPaleBlade02.FormKey,
+            Skyrim.Weapon.dunFrostmereCryptPaleBlade03.FormKey,
+            Skyrim.Weapon.dunFrostmereCryptPaleBlade04.FormKey,
+            Skyrim.Weapon.dunFrostmereCryptPaleBlade05.FormKey,
+            Skyrim.Weapon.dunGeirmundSigdisBow02.FormKey,
+            Skyrim.Weapon.dunGeirmundSigdisBow03.FormKey,
+            Skyrim.Weapon.dunGeirmundSigdisBow04.FormKey,
+            Skyrim.Weapon.dunGeirmundSigdisBow05.FormKey,
+            Skyrim.Weapon.dunGeirmundSigdisBow06.FormKey,
+            Skyrim.Weapon.dunGeirmundSigdisBowIllusion.FormKey,
+            Skyrim.Weapon.dunHagsEndDagger.FormKey,
+            Skyrim.Weapon.dunHalldirsCairnHalldirsStaff.FormKey,
+            Skyrim.Weapon.dunHaltedStreamPoachersAxe.FormKey,
+            Skyrim.Weapon.dunHuntersBow.FormKey,
+            Skyrim.Weapon.dunKatariahScimitar.FormKey,
+            Skyrim.Weapon.dunLiarsRetreatLonghammer.FormKey,
+            Skyrim.Weapon.dunLostValleyRedoubtAxe.FormKey,
+            Skyrim.Weapon.dunMarkarthWizardSpiderControlStaff.FormKey,
+            Skyrim.Weapon.dunMarkarthWizardSpiderControlStaffFake.FormKey,
+            Skyrim.Weapon.dunMossMotherValdrDagger.FormKey,
+            Skyrim.Weapon.dunPinewoodGroveWoodsmansFriend.FormKey,
+            Skyrim.Weapon.dunPOITrollsbane.FormKey,
+            Skyrim.Weapon.dunRannveigSildsStaff.FormKey,
+            Skyrim.Weapon.dunRedEagleSwordBase.FormKey,
+            Skyrim.Weapon.dunRedEagleSwordUpgraded.FormKey,
+            Skyrim.Weapon.dunRRHerebanesCourage.FormKey,
+            Skyrim.Weapon.dunSaarthalStaffJyrikStaff.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchIronMace01.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchIronMace02.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchIronMace03.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchIronSword01.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchIronSword02.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchIronWarAxe01.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchIronSword03.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchIronWarAxe02.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchIronWarAxe03.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchSteelMace01.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchSteelMace02.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchSteelMace03.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchSteelSword01.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchSteelSword02.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchSteelSword03.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchSteelWarAxe01.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchSteelWarAxe02.FormKey,
+            Skyrim.Weapon.dunSilentMoonsEnchSteelWarAxe03.FormKey,
+            Skyrim.Weapon.dunValthumeDragonPriestStaff.FormKey,
+            Skyrim.Weapon.dunVolunruudOkin.FormKey,
+            Skyrim.Weapon.dunVolunruudEduj.FormKey,
+            Skyrim.Weapon.dunVolunruudPickaxe.FormKey,
+            Skyrim.Weapon.dunVolunruudRelic02.FormKey,
+            Skyrim.Weapon.dunVolunruudRelic01.FormKey,
+            Skyrim.Weapon.DB05ElvenBow.FormKey,
+            Skyrim.Weapon.DBAlainAegisbane.FormKey,
+            Skyrim.Weapon.DBBladeOfWoeAstrid.FormKey,
+            Skyrim.Weapon.DBBladeOfWoeReward.FormKey,
+            Skyrim.Weapon.DA02Dagger.FormKey,
+            Skyrim.Weapon.DA03RuefulAxe.FormKey,
+            Skyrim.Weapon.DA06GiantClub.FormKey,
+            Skyrim.Weapon.DA06Hammer.FormKey,
+            Skyrim.Weapon.DA06Volendrung.FormKey,
+            Skyrim.Weapon.DA07MehrunesRazor.FormKey,
+            Skyrim.Weapon.DA08EbonyBlade.FormKey,
+            Skyrim.Weapon.DA08RealEbonyBlade.FormKey,
+            Skyrim.Weapon.DA09Dawnbreaker.FormKey,
+            Skyrim.Weapon.DA10MaceofMolagBal.FormKey,
+            Skyrim.Weapon.DA10RustyMace.FormKey,
+            Skyrim.Weapon.DA14BrokenRose.FormKey,
+            Skyrim.Weapon.DA14DremoraGreatswordFire03.FormKey,
+            Skyrim.Weapon.DA14SanguineRose.FormKey,
+            Skyrim.Weapon.DA15Wabbajack.FormKey,
+            Skyrim.Weapon.DA16SkullofCorruption.FormKey,
+            Skyrim.Weapon.MG07DraugrMagicAxe.FormKey,
+            Skyrim.Weapon.MG07DraugrMagicBow.FormKey,
+            Skyrim.Weapon.MG07DraugrMagicSword.FormKey,
+            Skyrim.Weapon.MG07StaffofMagnus.FormKey,
+            Skyrim.Weapon.MGRArniel02Staff.FormKey,
+            Skyrim.Weapon.MGRitual05Dagger.FormKey,
+            Skyrim.Weapon.MGRKeening.FormKey,
+            Skyrim.Weapon.MGRKeeningNonPlayable.FormKey,
+            Skyrim.Weapon.MQ105PhantomSword.FormKey,
+            Skyrim.Weapon.MQ203AkaviriKatana1.FormKey,
+            Skyrim.Weapon.MQ203AkaviriKatana2.FormKey,
+            Skyrim.Weapon.MQ203AkaviriKatana3.FormKey,
+            Skyrim.Weapon.MQ203AkaviriKatana4.FormKey,
+            Skyrim.Weapon.MQ203AkaviriKatana5.FormKey,
+            Skyrim.Weapon.MQ303DragonPriestStaff.FormKey,
+            Skyrim.Weapon.MQ304DraugrBattleAxeTsun01.FormKey,
+            Skyrim.Weapon.MQ304DraugrBattleAxeTsun02.FormKey,
+            Skyrim.Weapon.MQ304DraugrBattleAxeTsun03.FormKey,
+            Skyrim.Weapon.MQ304DraugrBattleAxeTsun04.FormKey,
+            Skyrim.Weapon.MS02Shiv.FormKey,
+            Skyrim.Weapon.MS06Staff.FormKey,
+            Skyrim.Weapon.POIMageBorvirsDagger.FormKey,
+            Skyrim.Weapon.POIMageRundisDagger.FormKey,
+            Skyrim.Weapon.T03Nettlebane.FormKey,
+            Skyrim.Weapon.TG07Chillrend001.FormKey,
+            Skyrim.Weapon.TG07Chillrend002.FormKey,
+            Skyrim.Weapon.TG07Chillrend003.FormKey,
+            Skyrim.Weapon.TG07Chillrend004.FormKey,
+            Skyrim.Weapon.TG07Chillrend005.FormKey,
+            Skyrim.Weapon.TG07Chillrend006.FormKey,
+            Skyrim.Weapon.SSDRocksplinterPickaxe.FormKey,
+            Skyrim.Weapon.C06BladeOfYsgramor.FormKey,
+            Skyrim.Weapon.C00GiantClub.FormKey,
+            Skyrim.Weapon.NightingaleBlade01.FormKey,
+            Skyrim.Weapon.NightingaleBlade02.FormKey,
+            Skyrim.Weapon.NightingaleBlade03.FormKey,
+            Skyrim.Weapon.NightingaleBlade04.FormKey,
+            Skyrim.Weapon.NightingaleBlade05.FormKey,
+            Skyrim.Weapon.NightingaleBladeNPC.FormKey,
+            Skyrim.Weapon.NightingaleBow01.FormKey,
+            Skyrim.Weapon.NightingaleBow02.FormKey,
+            Skyrim.Weapon.NightingaleBow03.FormKey,
+            Skyrim.Weapon.NightingaleBow04.FormKey,
+            Skyrim.Weapon.NightingaleBow05.FormKey,
+            Skyrim.Weapon.NightingaleBowNPC.FormKey,
+            Dawnguard.Weapon.DLC1AkaviriSword.FormKey,
+            Dawnguard.Weapon.DLC1AurielsBow.FormKey,
+            Dawnguard.Weapon.DLC1FrostGiantClub.FormKey,
+            Dawnguard.Weapon.DLC1HarkonsSword.FormKey,
+            Dawnguard.Weapon.DLC1LD_AetherialStaff.FormKey,
+            Dawnguard.Weapon.DLC1LD_AetheriumCrestNP.FormKey,
+            Dawnguard.Weapon.DLC1LD_KatriaBow.FormKey,
+            Dawnguard.Weapon.DLC1LD_KatriaBowNP.FormKey,
+            Dawnguard.Weapon.DLC1LD_SkyforgeSteelDaggerNP.FormKey,
+            Dawnguard.Weapon.DLC1PrelateDagger.FormKey,
+            Dawnguard.Weapon.DLC1PrelateMace.FormKey,
+            Dawnguard.Weapon.DLC1RuunvaldStaff.FormKey,
+            Dragonborn.Weapon.dlc2MerchBowOfTheStagPrince.FormKey,
+            Dragonborn.Weapon.DLC2BloodskalBlade.FormKey,
+            Dragonborn.Weapon.DLC2dunBrodirGroveStormfang.FormKey,
+            Dragonborn.Weapon.DLC2dunHaknirScimitar01.FormKey,
+            Dragonborn.Weapon.DLC2dunHaknirScimitar01NP.FormKey,
+            Dragonborn.Weapon.DLC2dunHaknirScimitar02.FormKey,
+            Dragonborn.Weapon.DLC2dunHaknirScimitar02NP.FormKey,
+            Dragonborn.Weapon.DLC2dunKolbjornRalisPickaxe.FormKey,
+            Dragonborn.Weapon.DLC2Horksbane.FormKey,
+            Dragonborn.Weapon.DLC2RR01FalxWarhammer.FormKey,
+            Dragonborn.Weapon.DLC2RR03NordPickaxe.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightStaff1.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightStaff2.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightStaff3.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightStaff4.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightStaff5.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightStaff6.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightSword1.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightSword2.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightSword3.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightSword4.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightSword5.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakFightSword6.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakStaff1.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakStaff2.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakStaff3.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakSword1.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakSword2.FormKey,
+            Dragonborn.Weapon.DLC2MKMiraakSword3.FormKey,
+            Dragonborn.Weapon.DLC2MiraakStaff.FormKey,
+            Dragonborn.Weapon.DLC2KagrumezFateBow01.FormKey
+        };
+
         public static Lazy<Settings> _settings = null!;
         public static Settings Settings => _settings.Value;
 
@@ -34,7 +219,7 @@ namespace OWLLeveledListAddition
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            string GetSpecialTypeFromKeywords(IWeaponGetter wpn)
+            static string GetSpecialTypeFromKeywords(IWeaponGetter wpn)
             {
                 string type = "";
 
@@ -64,11 +249,7 @@ namespace OWLLeveledListAddition
             }
 
             // Get OWL main
-            var OWLesp = "Open World Loot.esp";
-            var OWL = ModKey.FromFileName(OWLesp); 
-            //var OWL = (Mods.Count > 0) ? state.LoadOrder[Mods.First()].Mod : null;
-
-            if (OWL.IsNull)
+            if (!state.LoadOrder.TryGetValue("Open World Loot.esp", out var OWL))
             {
                 System.Console.WriteLine("'Open World Loot.esp' not found");
                 return;
@@ -77,16 +258,32 @@ namespace OWLLeveledListAddition
             System.Console.WriteLine("'Open World Loot.esp' found");
 
             // check if Legacy of the Dragonborn is there
-            var DBMesm = "LegacyoftheDragonborn.esm";
-            var DBM = ModKey.FromFileName(DBMesm);
-            //var OWL = (Mods.Count > 0) ? state.LoadOrder[Mods.First()].Mod : null;
-
-            if (!DBM.IsNull)
+            if (state.LoadOrder.TryGetValue("LegacyoftheDragonborn.esm", out var DBM))
             {
                 System.Console.WriteLine("Legacy of the dragonborn was found! It will be ignored!");
             }
 
 
+            // Initialise the blacklists
+            foreach (var weapon in Settings.BlacklistedWeapons)
+            {
+                WeaponBlacklist.Add(weapon.FormKey);
+            }
+            foreach (var armour in Settings.BlacklistedArmours)
+            {
+                ArmourBlacklist.Add(armour.FormKey);
+            }
+
+            // Vanilla mods
+            HashSet<ModKey> vanillaMods = new() {
+                Skyrim.ModKey,
+                Update.ModKey,
+                Dawnguard.ModKey,
+                HearthFires.ModKey,
+                Dragonborn.ModKey
+            };
+
+            // Weapon material keywords
             HashSet<IFormLinkGetter<IKeywordGetter>> weaponMaterialKeywords = new()
             {
                 Skyrim.Keyword.WeapMaterialIron,
@@ -109,6 +306,7 @@ namespace OWLLeveledListAddition
                 Dragonborn.Keyword.DLC2WeaponMaterialStalhrim
             };
 
+            // Weapon type keywords
             HashSet<IFormLinkGetter<IKeywordGetter>> weaponTypeKeywords = new()
             {
                 Skyrim.Keyword.WeapTypeDagger,
@@ -122,7 +320,8 @@ namespace OWLLeveledListAddition
                 Skyrim.Keyword.VendorItemArrow
             };
 
-            HashSet<IFormLinkGetter<IKeywordGetter>> armorMaterialKeywords = new()
+            // Armour material keywords
+            HashSet<IFormLinkGetter<IKeywordGetter>> armourMaterialKeywords = new()
             {
                 Skyrim.Keyword.ArmorMaterialIron,
                 Skyrim.Keyword.ArmorMaterialSteel,
@@ -155,7 +354,8 @@ namespace OWLLeveledListAddition
                 Dragonborn.Keyword.DLC2ArmorMaterialBonemoldLight
             };
 
-            HashSet<IFormLinkGetter<IKeywordGetter>> armorTypeKeywords = new()
+            // Armour type keywords
+            HashSet<IFormLinkGetter<IKeywordGetter>> armourTypeKeywords = new()
             {
                 Skyrim.Keyword.ArmorBoots,
                 Skyrim.Keyword.ArmorCuirass,
@@ -183,11 +383,13 @@ namespace OWLLeveledListAddition
             var loadorder = state.LoadOrder.PriorityOrder;
             if (Settings.IgnoreVanilla)
             {
-                loadorder = state.LoadOrder.PriorityOrder.Where(x => !x.ModKey.Equals(Skyrim.ModKey)
-                                                                    && !x.ModKey.Equals(Update.ModKey)
-                                                                    && !x.ModKey.Equals(Dawnguard.ModKey)
-                                                                    && !x.ModKey.Equals(HearthFires.ModKey)
-                                                                    && !x.ModKey.Equals(Dragonborn.ModKey));
+                loadorder = state.LoadOrder.PriorityOrder.Where(x => !vanillaMods.Contains(x.ModKey));
+            }
+
+            // Ignore blacklisted mods
+            if(Settings.BlacklistedMods.Count > 0)
+            {
+                loadorder = loadorder.Where(x => !Settings.BlacklistedMods.Contains(x.ModKey));
             }
 
             // Iterate on all weapons
@@ -209,7 +411,18 @@ namespace OWLLeveledListAddition
                 if (weaponGetter.Data is not null && weaponGetter.Data.Flags.HasFlag(WeaponData.Flag.CantDrop)) continue;
 
                 // Ignore Legacy of the dragonborn items
-                if (!DBM.IsNull && weaponGetter.FormKey.ModKey.Equals(DBM)) continue;
+                if (DBM is not null && weaponGetter.FormKey.ModKey.Equals(DBM.ModKey)) continue;
+
+
+                // Ignore vanilla
+                if (Settings.IgnoreVanilla && vanillaMods.Contains(weaponGetter.FormKey.ModKey)) continue;
+
+                // Ignore the blacklisted mods
+                if (Settings.BlacklistedMods.Contains(weaponGetter.FormKey.ModKey)) continue;
+
+                // Ignore blacklisted weapons
+                if (WeaponBlacklist.Contains(weaponGetter.FormKey)) continue;
+
 
                 string material = "";
                 string type = "";
@@ -357,7 +570,17 @@ namespace OWLLeveledListAddition
                     if (armourGetter.MajorFlags.HasFlag(Armor.MajorFlag.NonPlayable)) continue;
 
                     // Ignore Legacy of the dragonborn items
-                    if (!DBM.IsNull && armourGetter.FormKey.ModKey.Equals(DBM)) continue;
+                    if (DBM is not null && armourGetter.FormKey.ModKey.Equals(DBM.ModKey)) continue;
+
+
+                    // Ignore vanilla
+                    if (Settings.IgnoreVanilla && vanillaMods.Contains(armourGetter.FormKey.ModKey)) continue;
+
+                    // Ignore the blacklisted mods
+                    if (Settings.BlacklistedMods.Contains(armourGetter.FormKey.ModKey)) continue;
+
+                    // Ignore blacklisted armours
+                    if (ArmourBlacklist.Contains(armourGetter.FormKey)) continue;
 
 
                     string material = "";
@@ -366,14 +589,14 @@ namespace OWLLeveledListAddition
                     // Search all keywords
                     foreach (var keyword in armourGetter.Keywords)
                     {
-                        if (armorMaterialKeywords.Contains(keyword))
+                        if (armourMaterialKeywords.Contains(keyword))
                         {
                             var kw = keyword.TryResolve(state.LinkCache);
                             if (kw is null || kw.EditorID is null) continue;
 
                             material = kw.EditorID.Replace("ArmorMaterial", "").Replace("DLC2ArmorMaterial", "").Replace("DLC1ArmorMaterial", "");
                         }
-                        else if (armorTypeKeywords.Contains(keyword))
+                        else if (armourTypeKeywords.Contains(keyword))
                         {
                             var kw = keyword.TryResolve(state.LinkCache);
                             if (kw is null || kw.EditorID is null) continue;
