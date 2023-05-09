@@ -13,6 +13,7 @@ using Mutagen.Bethesda.Plugins.Order;
 using System.Xml.Linq;
 using Mutagen.Bethesda.Plugins.Cache;
 using static Mutagen.Bethesda.Skyrim.Furniture;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace OWLLeveledListAddition
 {
@@ -378,6 +379,7 @@ namespace OWLLeveledListAddition
             // Create a mod-dependent list of entries to add to the OWL lists
             Dictionary<Tuple<ModKey, string>, HashSet<LeveledItemEntry>> leveledItemsToAddPerMod = new();
 
+            HashSet<LeveledItemEntry> falmerWeapons = new();
 
             // Ignore vanilla
             var loadorder = state.LoadOrder.PriorityOrder;
@@ -470,6 +472,143 @@ namespace OWLLeveledListAddition
 
                     type = GetSpecialTypeFromKeywords(weaponGetter);
                 }
+                // Alikr
+                else if (weaponGetter.EditorID is not null && (weaponGetter.EditorID.Contains("scimitar", StringComparison.OrdinalIgnoreCase)
+                                                                || (weaponGetter.EditorID.Contains("alikr", StringComparison.OrdinalIgnoreCase))))
+                {
+                    material = "Alikr";
+
+                    type = GetSpecialTypeFromKeywords(weaponGetter);
+                }
+                // Falmer
+                else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialFalmer))
+                {
+                    // Store for later
+
+                    // Create a new leveled item entry
+                    LeveledItemEntry falmerEntry = new()
+                    {
+                        Data = new()
+                        {
+                            Count = 1,
+                            Level = 1,
+                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
+                        }
+                    };
+
+                    falmerWeapons.Add(falmerEntry);
+
+                    count1++;
+
+                    continue;
+                }
+                // Falmer Honed
+                else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialFalmerHoned))
+                {
+                    // Store for later
+
+                    // Create a series of new leveled item entries
+                    LeveledItemEntry falmerEntry = new()
+                    {
+                        Data = new()
+                        {
+                            Count = 1,
+                            Level = 18,
+                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
+                        }
+                    };
+
+                    falmerWeapons.Add(falmerEntry);
+
+                    falmerEntry = new()
+                    {
+                        Data = new()
+                        {
+                            Count = 1,
+                            Level = 19,
+                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
+                        }
+                    };
+
+                    falmerWeapons.Add(falmerEntry);
+
+                    falmerEntry = new()
+                    {
+                        Data = new()
+                        {
+                            Count = 1,
+                            Level = 20,
+                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
+                        }
+                    };
+
+                    falmerWeapons.Add(falmerEntry);
+
+                    falmerEntry = new()
+                    {
+                        Data = new()
+                        {
+                            Count = 1,
+                            Level = 21,
+                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
+                        }
+                    };
+
+                    falmerWeapons.Add(falmerEntry);
+
+                    falmerEntry = new()
+                    {
+                        Data = new()
+                        {
+                            Count = 1,
+                            Level = 25,
+                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
+                        }
+                    };
+
+                    falmerWeapons.Add(falmerEntry);
+
+                    falmerEntry = new()
+                    {
+                        Data = new()
+                        {
+                            Count = 1,
+                            Level = 26,
+                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
+                        }
+                    };
+
+                    falmerWeapons.Add(falmerEntry);
+
+                    falmerEntry = new()
+                    {
+                        Data = new()
+                        {
+                            Count = 1,
+                            Level = 27,
+                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
+                        }
+                    };
+
+                    falmerWeapons.Add(falmerEntry);
+
+                    falmerEntry = new()
+                    {
+                        Data = new()
+                        {
+                            Count = 1,
+                            Level = 28,
+                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
+                        }
+                    };
+
+                    falmerWeapons.Add(falmerEntry);
+
+                    count1++;
+
+                    continue;
+                }
+
 
                 else
                 {
@@ -734,8 +873,6 @@ namespace OWLLeveledListAddition
 
                     var count = split.Length;
 
-                    // CHECK FOR UNUSED LAST SPLIT
-
                     // Check that the size of split 
                     if (split.Length != 4) continue;
 
@@ -764,12 +901,31 @@ namespace OWLLeveledListAddition
                             modifiedList.Entries?.Add(hashEntry);
                         }
                     }
-                    
+
                 }
             }
+
+            // Handle falmer weapons
+            var falmerlist = Skyrim.LeveledItem.LItemFalmerWeapon.TryResolve(state.LinkCache);
+            if(falmerlist is not null) {
+                var list = state.PatchMod.LeveledItems.GetOrAddAsOverride(falmerlist);
+                
+                foreach (var entr in falmerWeapons)
+                {
+                    if (list.Entries is not null && !list.Entries.Contains(entr))
+                        list.Entries.Add(entr);
+                }
+            }
+
             System.Console.WriteLine("Done filling OWL leveled lists!");
             System.Console.WriteLine(count1 + " weapons and " + count2 + " armours were distributed into OWL's leveled lists.");
 
+
+            // Reset the counters
+            count1 = 0;
+            count2 = 0;
+
+            //
 
             System.Console.WriteLine("All done!");
         }
