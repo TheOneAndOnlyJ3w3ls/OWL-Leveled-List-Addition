@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using Mutagen.Bethesda.Plugins.Cache;
 using static Mutagen.Bethesda.Skyrim.Furniture;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Mutagen.Bethesda.Plugins.Records;
 
 namespace OWLLeveledListAddition
 {
@@ -220,6 +221,21 @@ namespace OWLLeveledListAddition
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
+            static LeveledItemEntry CreateNewLvlEntry(IMajorRecordGetter item, short count, short level)
+            {
+                LeveledItemEntry entry = new()
+                {
+                    Data = new()
+                    {
+                        Count = count,
+                        Level = level,
+                        Reference = new FormLink<IWeaponGetter>(item.FormKey)
+                    }
+                };
+
+                return entry;
+            }
+
             static string GetSpecialTypeFromKeywords(IWeaponGetter wpn)
             {
                 string type = "";
@@ -241,11 +257,20 @@ namespace OWLLeveledListAddition
                 {
                     type = "Bow";
                 }
+                /*else if (wpn.HasKeyword(Skyrim.Keyword.VendorItemArrow) && wpn.Data.Flags.HasFlag(WeaponData.Flag.))
+                {
+                    type = "Bolt";
+                }
                 else if (wpn.HasKeyword(Skyrim.Keyword.VendorItemArrow))
                 {
                     type = "Arrow";
+                }*/
+                else if (wpn.HasKeyword(Dawnguard.Keyword.WeapDwarvenCrossbow) 
+                            || (wpn.Data is not null && wpn.Data.AnimationType.Equals(WeaponAnimationType.Crossbow)))
+                {
+                    type = "Crossbow";
                 }
-
+                
                 return type;
             }
 
@@ -395,6 +420,7 @@ namespace OWLLeveledListAddition
             }
 
             // Iterate on all weapons
+            System.Console.WriteLine("Searching for weapons...");
             foreach (var weaponGetter in loadorder.WinningOverrides<IWeaponGetter>())
             {
                 // Ignore no keywords
@@ -486,17 +512,7 @@ namespace OWLLeveledListAddition
                     // Store for later
 
                     // Create a new leveled item entry
-                    LeveledItemEntry falmerEntry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 1,
-                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
-                        }
-                    };
-
-                    falmerWeapons.Add(falmerEntry);
+                    falmerWeapons.Add(CreateNewLvlEntry(weaponGetter, 1, 1));
 
                     count1++;
 
@@ -508,101 +524,14 @@ namespace OWLLeveledListAddition
                     // Store for later
 
                     // Create a series of new leveled item entries
-                    LeveledItemEntry falmerEntry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 18,
-                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
-                        }
-                    };
-
-                    falmerWeapons.Add(falmerEntry);
-
-                    falmerEntry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 19,
-                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
-                        }
-                    };
-
-                    falmerWeapons.Add(falmerEntry);
-
-                    falmerEntry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 20,
-                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
-                        }
-                    };
-
-                    falmerWeapons.Add(falmerEntry);
-
-                    falmerEntry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 21,
-                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
-                        }
-                    };
-
-                    falmerWeapons.Add(falmerEntry);
-
-                    falmerEntry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 25,
-                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
-                        }
-                    };
-
-                    falmerWeapons.Add(falmerEntry);
-
-                    falmerEntry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 26,
-                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
-                        }
-                    };
-
-                    falmerWeapons.Add(falmerEntry);
-
-                    falmerEntry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 27,
-                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
-                        }
-                    };
-
-                    falmerWeapons.Add(falmerEntry);
-
-                    falmerEntry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 28,
-                            Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
-                        }
-                    };
-
-                    falmerWeapons.Add(falmerEntry);
+                    falmerWeapons.Add(CreateNewLvlEntry(weaponGetter, 1, 18));
+                    falmerWeapons.Add(CreateNewLvlEntry(weaponGetter, 1, 19));
+                    falmerWeapons.Add(CreateNewLvlEntry(weaponGetter, 1, 20));
+                    falmerWeapons.Add(CreateNewLvlEntry(weaponGetter, 1, 21));
+                    falmerWeapons.Add(CreateNewLvlEntry(weaponGetter, 1, 25));
+                    falmerWeapons.Add(CreateNewLvlEntry(weaponGetter, 1, 26));
+                    falmerWeapons.Add(CreateNewLvlEntry(weaponGetter, 1, 27));
+                    falmerWeapons.Add(CreateNewLvlEntry(weaponGetter, 1, 28));
 
                     count1++;
 
@@ -648,15 +577,7 @@ namespace OWLLeveledListAddition
                 var tuple = new Tuple<ModKey, string>(weaponGetter.FormKey.ModKey, key.ToLower());
 
                 // Create a new leveled item entry
-                LeveledItemEntry entry = new()
-                {
-                    Data = new()
-                    {
-                        Count = 1,
-                        Level = 1,
-                        Reference = new FormLink<IWeaponGetter>(weaponGetter.FormKey)
-                    }
-                };
+                LeveledItemEntry entry = CreateNewLvlEntry(weaponGetter, 1, 1); 
 
                 // Add the new entry in the mod-dependent dictionary
                 leveledItemsToAddPerMod.TryGetValue(tuple, out var entryList);
@@ -756,15 +677,7 @@ namespace OWLLeveledListAddition
                     var tuple = new Tuple<ModKey, string>(armourGetter.FormKey.ModKey, key.ToLower());
 
                     // Create a new leveled item entry
-                    LeveledItemEntry entry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 1,
-                            Reference = new FormLink<IArmorGetter>(armourGetter.FormKey)
-                        }
-                    };
+                    LeveledItemEntry entry = CreateNewLvlEntry(armourGetter, 1, 1);
 
                     // Add the new entry in the mod-dependent dictionary
                     leveledItemsToAddPerMod.TryGetValue(tuple, out var entryList);
@@ -825,15 +738,7 @@ namespace OWLLeveledListAddition
                     lv.Entries.AddRange(lvlentry.Value);
 
                     // Create a new leveled list entry with that newly created leveled list
-                    LeveledItemEntry entry = new()
-                    {
-                        Data = new()
-                        {
-                            Count = 1,
-                            Level = 1,
-                            Reference = new FormLink<IWeaponGetter>(lv.FormKey)
-                        }
-                    };
+                    LeveledItemEntry entry = CreateNewLvlEntry(lv, 1, 1);
 
                     // Remove all single entries from the mod-independent list
                     leveledItemsToAdd.TryGetValue(lvlentry.Key.Item2, out var hash);
@@ -867,6 +772,7 @@ namespace OWLLeveledListAddition
 
                 if (lvlListGetter.EditorID.StartsWith("OWL_"))
                 {
+                    // Form the key
                     var split = lvlListGetter.EditorID.Split('_');
                     string material = "";
                     string type = "";
