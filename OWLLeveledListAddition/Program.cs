@@ -544,13 +544,23 @@ namespace OWLLeveledListAddition
                     // Search all keywords
                     foreach (var keyword in weaponGetter.Keywords)
                     {
+                        // Material
                         if (weaponMaterialKeywords.Contains(keyword))
                         {
                             var kw = keyword.TryResolve(state.LinkCache);
                             if (kw is null || kw.EditorID is null) continue;
 
-                            material = kw.EditorID.Replace("WeapMaterial", "").Replace("DLC2WeaponMaterial", "").Replace("DLC1WeapMaterial","");
+                            material = kw.EditorID.Replace("DLC1WeapMaterial", "").Replace("WeapMaterial", "").Replace("DLC2WeaponMaterial", "");
                         }
+
+                        // Fix weapons with armor dragon material
+                        else if (keyword.Equals(Skyrim.Keyword.ArmorMaterialDragonplate)
+                                 || keyword.Equals(Skyrim.Keyword.ArmorMaterialDragonscale)) 
+                        {
+                            material = "Dragonbone";
+                        }
+
+                        // Type
                         else if (weaponTypeKeywords.Contains(keyword))
                         {
                             var kw = keyword.TryResolve(state.LinkCache);
