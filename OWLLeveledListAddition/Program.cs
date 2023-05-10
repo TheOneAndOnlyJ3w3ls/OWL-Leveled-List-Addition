@@ -257,14 +257,6 @@ namespace OWLLeveledListAddition
                 {
                     type = "Bow";
                 }
-                /*else if (wpn.HasKeyword(Skyrim.Keyword.VendorItemArrow) && wpn.Data.Flags.HasFlag(WeaponData.Flag.))
-                {
-                    type = "Bolt";
-                }
-                else if (wpn.HasKeyword(Skyrim.Keyword.VendorItemArrow))
-                {
-                    type = "Arrow";
-                }*/
                 else if (wpn.HasKeyword(Dawnguard.Keyword.WeapDwarvenCrossbow) 
                             || (wpn.Data is not null && wpn.Data.AnimationType.Equals(WeaponAnimationType.Crossbow)))
                 {
@@ -322,7 +314,6 @@ namespace OWLLeveledListAddition
                 Skyrim.Keyword.WeapMaterialDaedric,
                 Skyrim.Keyword.WeapMaterialImperial,
                 Skyrim.Keyword.WeapMaterialSilver,
-                //Dragonborn.Keyword.WeapMaterialForsworn,
                 Skyrim.Keyword.WeapMaterialFalmer,
                 Skyrim.Keyword.WeapMaterialDraugrHoned,
                 Skyrim.Keyword.WeapMaterialDraugr,
@@ -330,6 +321,7 @@ namespace OWLLeveledListAddition
                 Dawnguard.Keyword.DLC1WeapMaterialDragonbone,
                 Dragonborn.Keyword.DLC2WeaponMaterialNordic,
                 Dragonborn.Keyword.DLC2WeaponMaterialStalhrim
+                //Dragonborn.Keyword.WeapMaterialForsworn,
             };
 
             // Weapon type keywords
@@ -500,7 +492,8 @@ namespace OWLLeveledListAddition
                 }
                 // Alikr
                 else if (weaponGetter.EditorID is not null && (weaponGetter.EditorID.Contains("scimitar", StringComparison.OrdinalIgnoreCase)
-                                                                || (weaponGetter.EditorID.Contains("alikr", StringComparison.OrdinalIgnoreCase))))
+                                                                || weaponGetter.EditorID.Contains("alikr", StringComparison.OrdinalIgnoreCase)
+                                                                || weaponGetter.EditorID.Contains("redguard", StringComparison.OrdinalIgnoreCase)))
                 {
                     material = "Alikr";
 
@@ -805,7 +798,7 @@ namespace OWLLeveledListAddition
                     var modifiedList = state.PatchMod.LeveledItems.GetOrAddAsOverride(lvlListGetter);
 
                     // Add all items to the leveled lists, if not already present
-                    foreach(var hashEntry in hash)
+                    foreach (var hashEntry in hash)
                     {
                         if (modifiedList.Entries is not null && modifiedList.Entries.Contains(hashEntry))
                         {
