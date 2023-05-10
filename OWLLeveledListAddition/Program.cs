@@ -23,7 +23,172 @@ namespace OWLLeveledListAddition
     {
         public static HashSet<FormKey> ArmourBlacklist { get; set; } = new()
         {
-             Skyrim.Armor.ArmorAstrid.FormKey
+             Skyrim.Armor.ArmorAstrid.FormKey,
+             Skyrim.Armor.ArmorAfflicted.FormKey,
+             Skyrim.Armor.ArmorAtronachFlameDead.FormKey,
+             Skyrim.Armor.ArmorAtronachFrostShield.FormKey,
+             Skyrim.Armor.ArmorDragonPriestMaskBronzeHelmet.FormKey,
+             Skyrim.Armor.ArmorDragonPriestMaskCorondrumHelmet.FormKey,
+             Skyrim.Armor.ArmorDragonPriestMaskEbonyHelmet.FormKey,
+             Skyrim.Armor.ArmorDragonPriestMaskIronHelmet.FormKey,
+             Skyrim.Armor.ArmorDragonPriestMaskMarbleHelmet.FormKey,
+             Skyrim.Armor.ArmorDragonPriestMaskMoonstoneHelmet.FormKey,
+             Skyrim.Armor.ArmorDragonPriestMaskOrichalumHelmet.FormKey,
+             Skyrim.Armor.ArmorDragonPriestMaskSteelHelmet.FormKey,
+             Skyrim.Armor.ArmorDragonPriestMaskUltraHelmet.FormKey,
+             Skyrim.Armor.ArmorDragonPriestMaskWoodHelmet.FormKey,
+             Skyrim.Armor.dunDeepwoodBoots.FormKey,
+             Skyrim.Armor.dunGauldurAmulet.FormKey,
+             Skyrim.Armor.dunGauldurAmuletFragmentFolgunthur.FormKey,
+             Skyrim.Armor.dunGauldurAmuletFragmentGeirmund.FormKey,
+             Skyrim.Armor.dunGauldurAmuletFragmentSaarthal.FormKey,
+             Skyrim.Armor.dunHunterRewardAmulet.FormKey,
+             Skyrim.Armor.dunLabrynthianDraugrArmorFX.FormKey,
+             Skyrim.Armor.dunLabyrinthianMazeCircletReward.FormKey,
+             Skyrim.Armor.dunMistwatchRing.FormKey,
+             Skyrim.Armor.dunMistwatchRingSell.FormKey,
+             Skyrim.Armor.dunMovarthsBoots.FormKey,
+             Skyrim.Armor.dunRatwayBrawlerGloves.FormKey,
+             Skyrim.Armor.dunRRHerebanesFortress.FormKey,
+             Skyrim.Armor.dunTargeOfTheBloodedShield.FormKey,
+             Skyrim.Armor.dunWaywardPassGhostArmor.FormKey,
+             Skyrim.Armor.dunWhiteRiverWatchGauntlets.FormKey,
+             Skyrim.Armor.DA02Armor.FormKey,
+             Skyrim.Armor.DA05HircinesRingCursed.FormKey,
+             Skyrim.Armor.DA05HircinesRing.FormKey,
+             Skyrim.Armor.DA05SaviorsHide.FormKey,
+             Skyrim.Armor.DA09MeridiaBallofLightArmor.FormKey,
+             Skyrim.Armor.DA11RingofNamira.FormKey,
+             Skyrim.Armor.DA13Spellbreaker.FormKey,
+             Skyrim.Armor.DA16VaerminaRobes.FormKey,
+             Skyrim.Armor.DBArmor.FormKey,
+             Skyrim.Armor.DBArmorBootsSP.FormKey,
+             Skyrim.Armor.DBArmorBoots.FormKey,
+             Skyrim.Armor.DBArmorBootsWorn.FormKey,
+             Skyrim.Armor.DBArmorBootsWornPlayable.FormKey,
+             Skyrim.Armor.DBArmorGloves.FormKey,
+             Skyrim.Armor.DBArmorGlovesReward.FormKey,
+             Skyrim.Armor.DBArmorGlovesSP.FormKey,
+             Skyrim.Armor.DBArmorGlovesWorn.FormKey,
+             Skyrim.Armor.DBArmorGlovesWornPlayable.FormKey,
+             Skyrim.Armor.DBArmorHelmet.FormKey,
+             Skyrim.Armor.DBArmorHelmetMaskLess.FormKey,
+             Skyrim.Armor.DBArmorHelmetSP.FormKey,
+             Skyrim.Armor.DBArmorHelmetWorn.FormKey,
+             Skyrim.Armor.DBArmorHelmetWornPlayable.FormKey,
+             Skyrim.Armor.DBArmorShortSleeve.FormKey,
+             Skyrim.Armor.DBArmorSP.FormKey,
+             Skyrim.Armor.DBArmorWorn.FormKey,
+             Skyrim.Armor.DBArmorWornPlayable.FormKey,
+             Skyrim.Armor.DBClothesHandWraps.FormKey,
+             Skyrim.Armor.DBClothesHood.FormKey,
+             Skyrim.Armor.DBClothesJester.FormKey,
+             Skyrim.Armor.DBClothesJesterBoots.FormKey,
+             Skyrim.Armor.DBClothesJesterBootsCicero.FormKey,
+             Skyrim.Armor.DBClothesJesterCicero.FormKey,
+             Skyrim.Armor.DBClothesJesterGloves.FormKey,
+             Skyrim.Armor.DBClothesJesterGlovesCicero.FormKey,
+             Skyrim.Armor.DBClothesJesterHat.FormKey,
+             Skyrim.Armor.DBClothesJesterHatCicero.FormKey,
+             Skyrim.Armor.DBClothesRedguardBoots.FormKey,
+             Skyrim.Armor.DBClothesRedguardClothes.FormKey,
+             Skyrim.Armor.DBClothesRedguardHood.FormKey,
+             Skyrim.Armor.DBClothesRobes.FormKey,
+             Skyrim.Armor.DBClothesShoes.FormKey,
+             Skyrim.Armor.DBJeweledAmulet.FormKey,
+             Skyrim.Armor.DBMuiriRing.FormKey,
+             Skyrim.Armor.DBNightweaversBand.FormKey,
+             Skyrim.Armor.DBSilverRing.FormKey,
+             Skyrim.Armor.DBWeddingRing1.FormKey,
+             Skyrim.Armor.DBWeddingRing2.FormKey,
+             Skyrim.Armor.DunYngolBarrowSteelPlateHelmet.FormKey,
+             Skyrim.Armor.MS02ForswornArmor.FormKey,
+             Skyrim.Armor.MS02ForswornBoots.FormKey,
+             Skyrim.Armor.MS02ForswornGauntlets.FormKey,
+             Skyrim.Armor.MS02ForswornHelmet.FormKey,
+             Skyrim.Armor.MS06ShieldL12.FormKey,
+             Skyrim.Armor.MS06ShieldL18.FormKey,
+             Skyrim.Armor.MS06ShieldL25.FormKey,
+             Skyrim.Armor.MS06ShieldL32.FormKey,
+             Skyrim.Armor.MS06ShieldL40.FormKey,
+             Skyrim.Armor.PrisonerCuffs.FormKey,
+             Skyrim.Armor.PrisonerCuffsPlayer.FormKey,
+             Skyrim.Armor.PrisonerCuffsSolitude.FormKey,
+             Skyrim.Armor.SheogorathBoots.FormKey,
+             Skyrim.Armor.SheogorathOutfit.FormKey,
+             Skyrim.Armor.FavorRoggiShield.FormKey,
+             Skyrim.Armor.FavorOrcsGauntlets.FormKey,
+             Skyrim.Armor.FavorNosterHelmet.FormKey,
+             Skyrim.Armor.FavorIgmundShield.FormKey,
+             Skyrim.Armor.FavorHelmofWinterhold.FormKey,
+             Skyrim.Armor.FavorShahveeSymbol.FormKey,
+             Skyrim.Armor.FavorWindhelmViolaRing.FormKey,
+             Skyrim.Armor.FavorFridaRing.FormKey,
+             Skyrim.Armor.ExecutionHoodDB.FormKey,
+             Skyrim.Armor.ExecutionHood.FormKey,
+             Skyrim.Armor.ElderScrollHandAttachArmor.FormKey,
+             Skyrim.Armor.DummyShield.FormKey,
+             Skyrim.Armor.DummyHelmet.FormKey,
+             Skyrim.Armor.DummyCuirass.FormKey,
+             Skyrim.Armor.DummyBoots.FormKey,
+             Skyrim.Armor.ClavicusVileMask.FormKey,
+             Skyrim.Armor.ArmorTsunCuirass.FormKey,
+             Skyrim.Armor.ArmorTsunBoots.FormKey,
+             Skyrim.Armor.ArmorThievesGuildBoots.FormKey,
+             Skyrim.Armor.ArmorThievesGuildBootsPlayerImproved.FormKey,
+             Skyrim.Armor.ArmorThievesGuildBootsPlayer.FormKey,
+             Skyrim.Armor.ArmorThievesGuildCuirassPlayer.FormKey,
+             Skyrim.Armor.ArmorThievesGuildCuirass.FormKey,
+             Skyrim.Armor.ArmorThievesGuildCuirassPlayerImproved.FormKey,
+             Skyrim.Armor.ArmorThievesGuildGauntlets.FormKey,
+             Skyrim.Armor.ArmorThievesGuildGauntletsPlayer.FormKey,
+             Skyrim.Armor.ArmorThievesGuildGauntletsPlayerImproved.FormKey,
+             Skyrim.Armor.ArmorThievesGuildHelmet.FormKey,
+             Skyrim.Armor.ArmorThievesGuildHelmetPlayer.FormKey,
+             Skyrim.Armor.ArmorThievesGuildHelmetPlayerImproved.FormKey,
+             Skyrim.Armor.ArmorThievesGuildKarliahBoots.FormKey,
+             Skyrim.Armor.ArmorThievesGuildKarliahCuirass.FormKey,
+             Skyrim.Armor.ArmorThievesGuildKarliahGauntlets.FormKey,
+             Skyrim.Armor.ArmorThievesGuildKarliahHelmet.FormKey,
+             Skyrim.Armor.ArmorThievesGuildLeaderBoots.FormKey,
+             Skyrim.Armor.ArmorThievesGuildLeaderBootsMercer.FormKey,
+             Skyrim.Armor.ArmorThievesGuildLeaderCuirass.FormKey,
+             Skyrim.Armor.ArmorThievesGuildLeaderGauntlets.FormKey,
+             Skyrim.Armor.ArmorThievesGuildLeaderGauntletsMercer.FormKey,
+             Skyrim.Armor.ArmorThievesGuildLeaderHelmet.FormKey,
+             Skyrim.Armor.ArmorThievesGuildVariant02Helmet.FormKey,
+             Skyrim.Armor.ArmorThievesGuildVariantBoots.FormKey,
+             Skyrim.Armor.ArmorThievesGuildVariantCuirass.FormKey,
+             Skyrim.Armor.ArmorThievesGuildVariantGauntlets.FormKey,
+             Skyrim.Armor.ArmorThievesGuildVariantHelmet.FormKey,
+             Skyrim.Armor.ArmorSummersetShadowsGuildBoots.FormKey,
+             Skyrim.Armor.ArmorSummersetShadowsGuildCuirass.FormKey,
+             Skyrim.Armor.ArmorSummersetShadowsGuildGauntlets.FormKey,
+             Skyrim.Armor.ArmorSummersetShadowsGuildHelmet.FormKey,
+             Skyrim.Armor.ArmorShieldofYsgramor.FormKey,
+             Skyrim.Armor.ArmorNightingaleBoots.FormKey,
+             Skyrim.Armor.ArmorNightingaleBootsPlayer01.FormKey,
+             Skyrim.Armor.ArmorNightingaleBootsPlayer02.FormKey,
+             Skyrim.Armor.ArmorNightingaleBootsPlayer03.FormKey,
+             Skyrim.Armor.ArmorNightingaleCuirass.FormKey,
+             Skyrim.Armor.ArmorNightingaleCuirassPlayer01.FormKey,
+             Skyrim.Armor.ArmorNightingaleCuirassPlayer02.FormKey,
+             Skyrim.Armor.ArmorNightingaleCuirassPlayer03.FormKey,
+             Skyrim.Armor.ArmorNightingaleGauntlets.FormKey,
+             Skyrim.Armor.ArmorNightingaleGauntletsPlayer01.FormKey,
+             Skyrim.Armor.ArmorNightingaleGauntletsPlayer02.FormKey,
+             Skyrim.Armor.ArmorNightingaleGauntletsPlayer03.FormKey,
+             Skyrim.Armor.ArmorNightingaleHelmet.FormKey,
+             Skyrim.Armor.ArmorNightingaleHelmetPlayer01.FormKey,
+             Skyrim.Armor.ArmorNightingaleHelmetPlayer02.FormKey,
+             Skyrim.Armor.ArmorNightingaleHelmetPlayer03.FormKey,
+             Skyrim.Armor.ArmorLinweBoots.FormKey,
+             Skyrim.Armor.ArmorLinweCuirass.FormKey,
+             Skyrim.Armor.ArmorLinweGauntlets.FormKey,
+             Skyrim.Armor.ArmorLinweHelmet.FormKey,
+             Skyrim.Armor.ArmorManakin.FormKey,
+             Skyrim.Armor.ArmorGag.FormKey,
+             Skyrim.Armor.TG00MadesiRing.FormKey
         };
 
         public static HashSet<FormKey> WeaponBlacklist { get; set; } = new()
@@ -362,6 +527,14 @@ namespace OWLLeveledListAddition
                 Skyrim.Keyword.ArmorMaterialImperialLight,
                 Skyrim.Keyword.ArmorMaterialIronBanded,
                 Skyrim.Keyword.ArmorMaterialStormcloak,
+                Update.Keyword.ArmorMaterialBearStormcloak,
+                Update.Keyword.ArmorMaterialBlades,
+                Update.Keyword.ArmorMaterialFalmer,
+                Update.Keyword.ArmorMaterialForsworn,
+                Update.Keyword.ArmorMaterialForsworn,
+                Update.Keyword.ArmorMaterialPenitus,
+                Update.Keyword.ArmorMaterialThievesGuild,
+                Update.Keyword.ArmorMaterialThievesGuildLeader,
                 Dragonborn.Keyword.DLC2ArmorMaterialNordicHeavy,
                 Dragonborn.Keyword.DLC2ArmorMaterialNordicLight,
                 Dragonborn.Keyword.DLC2ArmorMaterialStalhrimHeavy,
@@ -379,8 +552,7 @@ namespace OWLLeveledListAddition
                 Skyrim.Keyword.ArmorCuirass,
                 Skyrim.Keyword.ArmorShield,
                 Skyrim.Keyword.ArmorGauntlets,
-                Skyrim.Keyword.ArmorHelmet,
-                Skyrim.Keyword.WeapTypeBow
+                Skyrim.Keyword.ArmorHelmet
             };
 
             // Counters
@@ -568,7 +740,8 @@ namespace OWLLeveledListAddition
                 // Ignore if either the material or the type is null
                 if (material == "" || type == "")
                 {
-                    //System.Console.WriteLine("> keywords not found: " + material + "/" + type);
+                    if(Settings.Debug)
+                        System.Console.WriteLine("> keywords not found: " + material + "/" + type);
                     continue;
                 }
 
@@ -611,12 +784,18 @@ namespace OWLLeveledListAddition
             System.Console.WriteLine("Done with Weapons!");
 
 
-            if (Settings.DoArmours)
+            if (Settings.DoArmours || Settings.DoShieldsOnly)
             {
                 System.Console.WriteLine("Retrieving armors...");
                 // Iterate on all weapons
                 foreach (var armourGetter in loadorder.WinningOverrides<IArmorGetter>())
                 {
+                    // If shield only is ticked, ignore if not shield
+                    if (Settings.DoShieldsOnly)
+                    {
+                        if (!armourGetter.HasKeyword(Skyrim.Keyword.ArmorShield)) continue;
+                    }
+
                     // Ignore no keywords
                     if (armourGetter.Keywords is null) continue;
 
@@ -657,7 +836,9 @@ namespace OWLLeveledListAddition
                             var kw = keyword.TryResolve(state.LinkCache);
                             if (kw is null || kw.EditorID is null) continue;
 
-                            material = kw.EditorID.Replace("ArmorMaterial", "").Replace("DLC2ArmorMaterial", "").Replace("DLC1ArmorMaterial", "");
+                            material = kw.EditorID.Replace("DLC2ArmorMaterial", "").Replace("DLC1ArmorMaterial", "").Replace("ArmorMaterial", "");
+                            material = material.Replace("NordicHeavy", "Nordic").Replace("NordicLight", "Nordic");
+                            material = material.Replace("BonemoldHeavy", "Bonemold").Replace("BonemoldLight", "Bonemold");
                         }
                         else if (armourTypeKeywords.Contains(keyword))
                         {
@@ -668,12 +849,15 @@ namespace OWLLeveledListAddition
                         }
                     }
 
+                    // Ignore null
                     if (material == "" || type == "")
                     {
-                        //System.Console.WriteLine("> keywords not found: " + material + "/" + type);
+                        if(Settings.Debug)
+                            System.Console.WriteLine("> keywords not found: " + material + "/" + type);
                         continue;
                     }
-                    //System.Console.WriteLine("> keywords found ");
+                    
+
 
                     // Form the keys for the dictionaries
                     string key = material + "_" + type;
