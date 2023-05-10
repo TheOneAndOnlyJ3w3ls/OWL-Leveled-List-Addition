@@ -984,7 +984,9 @@ namespace OWLLeveledListAddition
                     // Add all items to the leveled lists, if not already present
                     foreach (var hashEntry in hash)
                     {
-                        if (modifiedList.Entries is not null && modifiedList.Entries.Contains(hashEntry))
+                        modifiedList.Entries ??= new();
+
+                        if (modifiedList.Entries.Contains(hashEntry))
                         {
                             if(Settings.Debug)
                                 System.Console.WriteLine("Leveled list entry already exists, skipping!");
