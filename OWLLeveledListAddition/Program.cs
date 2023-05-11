@@ -618,6 +618,7 @@ namespace OWLLeveledListAddition
 
                 string material = "";
                 string type = "";
+                short level = 1;
 
                 // Dawnguard
                 if (weaponGetter.HasKeyword(Dawnguard.Keyword.DLC1DawnguardItem))
@@ -634,16 +635,23 @@ namespace OWLLeveledListAddition
                     type = GetSpecialTypeFromKeywords(weaponGetter);
                 }
                 // Draugr 
-                else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialDraugr))
+                else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialDraugr) || weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialDraugrHoned))
                 {
-                    material = "Draugr";
+                    // Handle Draugr Nord Hero
+                    if (weaponGetter.EditorID is not null && weaponGetter.EditorID.Contains("nordhero", StringComparison.OrdinalIgnoreCase))
+                    {
+                        material = "DraugrNordHero";
+                    }
+                    else
+                    {
+                        material = "Draugr";
 
-                    type = GetSpecialTypeFromKeywords(weaponGetter);
-                }
-                // Draugr Honed
-                else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialDraugrHoned))
-                {
-                    material = "DraugrNordHero";
+                        // Handle Draugr Honed
+                        if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialDraugrHoned))
+                        {
+                            level = 12;
+                        }
+                    }
 
                     type = GetSpecialTypeFromKeywords(weaponGetter);
                 }
@@ -753,7 +761,7 @@ namespace OWLLeveledListAddition
                 var tuple = new Tuple<ModKey, string>(weaponGetter.FormKey.ModKey, key.ToLower());
 
                 // Create a new leveled item entry
-                LeveledItemEntry entry = CreateNewLvlEntry(weaponGetter, 1, 1); 
+                LeveledItemEntry entry = CreateNewLvlEntry(weaponGetter, 1, level);
 
                 // Add the new entry in the mod-dependent dictionary
                 leveledItemsToAddPerMod.TryGetValue(tuple, out var entryList);
