@@ -568,7 +568,9 @@ namespace OWLLeveledListAddition
             // Create a mod-dependent list of entries to add to the OWL lists
             Dictionary<Tuple<ModKey, string>, HashSet<LeveledItemEntry>> leveledItemsToAddPerMod = new();
 
+
             HashSet<LeveledItemEntry> falmerWeapons = new();
+            HashSet<LeveledItemEntry> woodWeapons = new();
 
             // Ignore vanilla
             var loadorder = state.LoadOrder.PriorityOrder;
@@ -710,8 +712,7 @@ namespace OWLLeveledListAddition
 
                     continue;
                 }
-
-
+                // All the rest
                 else
                 {
                     // Search all keywords
@@ -728,7 +729,7 @@ namespace OWLLeveledListAddition
 
                         // Fix weapons with armor dragon material
                         else if (keyword.Equals(Skyrim.Keyword.ArmorMaterialDragonplate)
-                                 || keyword.Equals(Skyrim.Keyword.ArmorMaterialDragonscale)) 
+                                 || keyword.Equals(Skyrim.Keyword.ArmorMaterialDragonscale))
                         {
                             material = "Dragonbone";
                         }
@@ -748,7 +749,13 @@ namespace OWLLeveledListAddition
                 // Ignore if either the material or the type is null
                 if (material == "" || type == "")
                 {
-                    if(Settings.Debug)
+                    // Wood weapons
+                    if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapMaterialWood))
+                    {
+                        woodWeapons.Add(CreateNewLvlEntry(weaponGetter, 1, 1));
+                    }
+
+                    if (Settings.Debug)
                         System.Console.WriteLine("> keywords not found: " + material + "/" + type);
                     continue;
                 }
@@ -791,11 +798,11 @@ namespace OWLLeveledListAddition
             }
             System.Console.WriteLine("Done with Weapons!");
 
-
+            /// Iterate on all Armours
             if (Settings.DoArmours || Settings.DoShieldsOnly)
             {
                 System.Console.WriteLine("Retrieving armors...");
-                // Iterate on all weapons
+                
                 foreach (var armourGetter in loadorder.WinningOverrides<IArmorGetter>())
                 {
                     // If shield only is ticked, ignore if not shield
@@ -904,7 +911,7 @@ namespace OWLLeveledListAddition
             }
             
 
-            // Iterate on the mod-dependent dictionary, to create new leveled lists for the bigger ones
+            /// Iterate on the mod-dependent dictionary, to create new leveled lists for the bigger ones
             System.Console.WriteLine("Creating new leveled lists...");
             foreach (var lvlentry in leveledItemsToAddPerMod)
             {
@@ -959,7 +966,7 @@ namespace OWLLeveledListAddition
             System.Console.WriteLine("Created " + count3 + " new leveled lists!");
 
 
-            // Iterate on OWL leveled lists
+            /// Iterate on OWL leveled lists
             System.Console.WriteLine("Starting to fill the OWL leveled lists...");
             foreach (var lvlListGetter in state.LoadOrder.PriorityOrder.Where(x => x.ModKey.Equals(OWL.ModKey)).WinningOverrides<ILeveledItemGetter>())
             {
@@ -1008,7 +1015,7 @@ namespace OWLLeveledListAddition
                 }
             }
 
-            // Handle falmer weapons
+            /// Handle falmer weapons
             var falmerlist = Skyrim.LeveledItem.LItemFalmerWeapon.TryResolve(state.LinkCache);
             if(falmerlist is not null) {
                 var list = state.PatchMod.LeveledItems.GetOrAddAsOverride(falmerlist);
@@ -1019,6 +1026,27 @@ namespace OWLLeveledListAddition
                         list.Entries.Add(entr);
                 }
             }
+
+            /// Handle Wood weapons
+            // Create a whole new leveled list
+            var woodlist = state.PatchMod.LeveledItems.AddNew();
+
+            // Set the new leveled list values
+            woodlist.EditorID = "OWL_Weapon_Wood_All";
+            woodlist.ChanceNone = 0;
+            woodlist.Flags.SetFlag(LeveledItem.Flag.CalculateForEachItemInCount, true);
+            woodlist.Flags.SetFlag(LeveledItem.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer, true);
+            woodlist.Entries = new();
+            woodlist.Entries.AddRange(woodWeapons);
+
+            if (OWL.Mod is null) return;
+            var llist = OWL.Mod.LeveledItems.Records.First(x => x.EditorID == "OWL_Weapon_Iron_Sword");
+            var test = state.PatchMod.LeveledItems.GetOrAddAsOverride(llist);
+            test.Entries ??= new();
+            test.Entries.Add(CreateNewLvlEntry(woodlist, 1, 1));
+            count1++;
+
+
 
             System.Console.WriteLine("Done filling OWL leveled lists!");
             System.Console.WriteLine(count1 + " weapons and " + count2 + " armours were distributed into OWL's leveled lists.");
