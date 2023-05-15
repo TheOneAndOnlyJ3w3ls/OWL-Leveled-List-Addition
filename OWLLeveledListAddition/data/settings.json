@@ -1,5 +1,12 @@
 {
-  "SearchByEditorID": true,
-  "QuicksilverIsSilver": true,
-  "Debug": false
+  "IgnoreVanilla": true,
+  "DoArmours": true,
+  "DoShieldsOnly": true,
+  "MinAmountLeveledList": 10,
+  "Debug": false,
+  "BlacklistedMods": [
+    "LegacyoftheDragonborn.esm"
+  ],
+  "BlacklistedWeapons": [],
+  "BlacklistedArmours": []
 }
