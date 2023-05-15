@@ -45,7 +45,7 @@ namespace OWLLeveledListAddition
 
         [SettingName("Blacklisted armours")]
         [Tooltip("These armours will NOT be added into OWL leveled lists")]
-        public HashSet<FormLink<IWeaponGetter>> BlacklistedArmours = new();
+        public HashSet<FormLink<IArmorGetter>> BlacklistedArmours = new();
 
     }
 }
