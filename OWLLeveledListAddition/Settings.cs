@@ -17,6 +17,14 @@ namespace OWLLeveledListAddition
         [Tooltip("Ignore Skyrim and DLCs weapons and armours (which OWL already handled)")]
         public bool IgnoreVanilla = true;
 
+        [SettingName("Populate Ammunition leveled lists")]
+        [Tooltip("Will populate ammunition into OWL leveled lists")]
+        public bool DoAmmo = true;
+
+        [SettingName("Attempt to fix ammunition keywords?")]
+        [Tooltip("Will attempt to fix the ammunition keywords by looking at the crafting recipes")]
+        public bool FixAmmoKeywords = true;
+
         [SettingName("Populate Armour leveled lists")]
         [Tooltip("Will populate weapons AND armours into OWL leveled lists")]
         public bool DoArmours = true;

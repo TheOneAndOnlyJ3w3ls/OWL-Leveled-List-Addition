@@ -7,19 +7,13 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.FormKeys.SkyrimSE;
 using System.Threading.Tasks;
 using Noggog;
-using System.Text.RegularExpressions;
 using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Plugins.Order;
-using System.Xml.Linq;
-using Mutagen.Bethesda.Plugins.Cache;
-using static Mutagen.Bethesda.Skyrim.Furniture;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mutagen.Bethesda.Plugins.Records;
 
 namespace OWLLeveledListAddition
 {
 
-	public class Program
+    public class Program
     {
         public static HashSet<FormKey> ArmourBlacklist { get; set; } = new()
         {
@@ -431,6 +425,60 @@ namespace OWLLeveledListAddition
                 return type;
             }
 
+            static FormLink<IKeywordGetter> GetKeywordFromMaterial(FormKey material)
+            {
+                FormLink<IKeywordGetter> k = new();
+                if(material.Equals(Skyrim.MiscItem.IngotCorundum.FormKey))
+                {
+                    k = Skyrim.Keyword.WeapMaterialSteel;
+                }
+                else if (material.Equals(Skyrim.MiscItem.IngotDwarven.FormKey))
+                {
+                    k = Skyrim.Keyword.WeapMaterialDwarven;
+                }
+                else if (material.Equals(Skyrim.MiscItem.IngotEbony.FormKey))
+                {
+                    k = Skyrim.Keyword.WeapMaterialEbony;
+                }
+                else if (material.Equals(Skyrim.MiscItem.IngotIMoonstone.FormKey) || material.Equals(Skyrim.MiscItem.IngotQuicksilver.FormKey))
+                {
+                    k = Skyrim.Keyword.WeapMaterialElven;
+                }
+                else if (material.Equals(Skyrim.MiscItem.IngotMalachite.FormKey))
+                {
+                    k = Skyrim.Keyword.WeapMaterialGlass;
+                }
+                else if (material.Equals(Skyrim.MiscItem.IngotIron.FormKey))
+                {
+                    k = Skyrim.Keyword.WeapMaterialIron;
+                }
+                else if (material.Equals(Skyrim.MiscItem.IngotOrichalcum.FormKey))
+                {
+                    k = Skyrim.Keyword.WeapMaterialOrcish;
+                }
+                else if (material.Equals(Skyrim.MiscItem.IngotSteel.FormKey))
+                {
+                    k = Skyrim.Keyword.WeapMaterialSteel;
+                }
+                else if (material.Equals(Skyrim.MiscItem.ingotSilver.FormKey))
+                {
+                    k = Skyrim.Keyword.WeapMaterialSilver;
+                }
+                else if (material.Equals(Dragonborn.MiscItem.DLC2OreStalhrim.FormKey))
+                {
+                    k = Dragonborn.Keyword.DLC2WeaponMaterialStalhrim;
+                }
+                else if (material.Equals(Skyrim.Ingredient.DaedraHeart))
+                {
+                    k = Skyrim.Keyword.WeapMaterialDaedric;
+                }
+                else
+                {
+                    //k = Dragonborn.Keyword.DLC2WeaponMaterialNordic;
+                }
+                return k;
+            }
+
             // Get OWL main
             if (!state.LoadOrder.TryGetValue("Open World Loot.esp", out var OWL))
             {
@@ -585,7 +633,218 @@ namespace OWLLeveledListAddition
                 loadorder = loadorder.Where(x => !Settings.BlacklistedMods.Contains(x.ModKey));
             }
 
-            // Iterate on all weapons
+
+            // Ammunition
+            if(Settings.FixAmmoKeywords)
+            {
+                System.Console.WriteLine("Attempting to fix ammunition keywords...");
+                foreach (var ammoRecipeGetter in loadorder.WinningOverrides<IConstructibleObjectGetter>())
+                {
+                    // Ignore null
+                    if (ammoRecipeGetter.Items is null) continue;
+
+                    // Ignore items that are not weapons
+                    var ammo = ammoRecipeGetter.CreatedObject.TryResolve<IAmmunitionGetter>(state.LinkCache);
+                    if (ammo is null) continue;
+
+                    HashSet<IKeywordGetter> keywords = new();
+
+                    // For each item needed to craft
+                    foreach (var item in ammoRecipeGetter.Items)
+                    {
+                        if(item.Item.Item is not null)
+                        {
+                            FormLink<IKeywordGetter> k = GetKeywordFromMaterial(item.Item.Item.FormKey);
+                            var keyword = k.TryResolve(state.LinkCache);
+                            if (keyword is null) continue;
+
+                            keywords.Add(keyword);
+                        }
+                    }
+
+                    // Ignore if there are no materials
+                    if (keywords.Count == 0) continue;
+
+                    var winningKeyword = keywords.First();
+
+                    // If there are many keywords found... 
+                    if (keywords.Count > 1)
+                    {
+                        // Get the strongest weapon material
+                        if (keywords.Contains(Dawnguard.Keyword.DLC1WeapMaterialDragonbone.Resolve(state.LinkCache))) 
+                            winningKeyword = Dawnguard.Keyword.DLC1WeapMaterialDragonbone.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDaedric.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialDaedric.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Dragonborn.Keyword.DLC2WeaponMaterialStalhrim.Resolve(state.LinkCache))) 
+                            winningKeyword = Dragonborn.Keyword.DLC2WeaponMaterialStalhrim.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialEbony.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialEbony.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialGlass.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialGlass.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Dragonborn.Keyword.DLC2WeaponMaterialNordic.Resolve(state.LinkCache))) 
+                            winningKeyword = Dragonborn.Keyword.DLC2WeaponMaterialNordic.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialOrcish.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialOrcish.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialElven.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialElven.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDwarven.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialDwarven.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialImperial.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialImperial.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialSilver.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialSilver.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialSteel.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialSteel.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDraugrHoned.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialDraugrHoned.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialIron.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialIron.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialFalmer.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialFalmer.Resolve(state.LinkCache);
+                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDraugr.Resolve(state.LinkCache))) 
+                            winningKeyword = Skyrim.Keyword.WeapMaterialDraugr.Resolve(state.LinkCache);
+                    }
+
+                    // Get the ammunition
+                    var v = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammo);
+
+                    // Add the new keyword
+                    v.Keywords ??= new();
+                    if(!v.Keywords.Contains(winningKeyword))
+                        v.Keywords.Add(winningKeyword);
+                }
+                System.Console.WriteLine("Done fixing ammunition!");
+            }
+
+            if (Settings.DoAmmo)
+            {
+                System.Console.WriteLine("Searching for ammunition...");
+                foreach (var ammoGetter in loadorder.WinningOverrides<IAmmunitionGetter>())
+                {
+                    // Ignore no keywords
+                    if (ammoGetter.Keywords is null) continue;
+
+                    // Ignore enchanted
+                    if (ammoGetter.Description is not null) continue;
+
+                    // Ignore Legacy of the dragonborn items
+                    if (DBM is not null && ammoGetter.FormKey.ModKey.Equals(DBM.ModKey)) continue;
+
+                    // Ignore vanilla
+                    if (Settings.IgnoreVanilla && vanillaMods.Contains(ammoGetter.FormKey.ModKey)) continue;
+
+                    // Ignore the blacklisted mods
+                    if (Settings.BlacklistedMods.Contains(ammoGetter.FormKey.ModKey)) continue;
+
+
+                    string material = "";
+                    string type = "";
+
+                    // Dawnguard
+                    if (ammoGetter.HasKeyword(Dawnguard.Keyword.DLC1DawnguardItem))
+                    {
+                        material = "Dawnguard";
+                    }
+                    // Silver
+                    else if (ammoGetter.HasKeyword(Skyrim.Keyword.WeapMaterialSilver))
+                    {
+                        material = "Silver";
+                    }
+                    // Draugr 
+                    else if (ammoGetter.HasKeyword(Skyrim.Keyword.WeapMaterialDraugr))
+                    {
+                        material = "Draugr";
+                    }
+                    // Draugr Honed
+                    else if (ammoGetter.HasKeyword(Skyrim.Keyword.WeapMaterialDraugrHoned))
+                    {
+                        material = "DraugrNordHero";
+                    }
+                    // Forsworn
+                    else if (ammoGetter.EditorID is not null && ammoGetter.EditorID.Contains("forsworn", StringComparison.OrdinalIgnoreCase))
+                    {
+                        material = "Forsworn";
+                    }
+                    // Forsworn
+                    else if (ammoGetter.EditorID is not null && ammoGetter.EditorID.Contains("nordic", StringComparison.OrdinalIgnoreCase))
+                    {
+                        material = "Nordic";
+                    }
+                    // Imperial
+                    else if (ammoGetter.HasKeyword(Skyrim.Keyword.WeapMaterialImperial)
+                        || (ammoGetter.EditorID is not null && ammoGetter.EditorID.Contains("imperial", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        material = "Imperial";
+                    }
+                    // Falmer
+                    else if (ammoGetter.HasKeyword(Skyrim.Keyword.WeapMaterialFalmer) || ammoGetter.HasKeyword(Skyrim.Keyword.WeapMaterialFalmerHoned))
+                    {
+                        material = "Falmer";
+                    }
+
+                    else
+                    {
+                        // Search all keywords
+                        foreach (var keyword in ammoGetter.Keywords)
+                        {
+                            if (weaponMaterialKeywords.Contains(keyword))
+                            {
+                                var kw = keyword.TryResolve(state.LinkCache);
+                                if (kw is null || kw.EditorID is null) continue;
+
+                                material = kw.EditorID.Replace("DLC2WeaponMaterial", "").Replace("DLC1WeapMaterial", "").Replace("WeapMaterial", "");
+                            }
+                        }
+
+                    }
+
+                    // Ammo type
+                    if (ammoGetter.HasKeyword(Skyrim.Keyword.VendorItemArrow) && !ammoGetter.Flags.HasFlag(Ammunition.Flag.NonBolt))
+                    {
+                        type = "Bolt";
+                    }
+                    else if (ammoGetter.HasKeyword(Skyrim.Keyword.VendorItemArrow))
+                    {
+                        type = "Arrow";
+                    }
+
+                    // Ignore if either the material or the type is null
+                    if (material == "" || type == "")
+                    {
+                        if (Settings.Debug)
+                            System.Console.WriteLine("> keywords not found: " + material + "/" + type);
+                        continue;
+                    }
+
+                    if (Settings.Debug)
+                        System.Console.WriteLine("> keywords found ");
+
+                    // Form the keys for the dictionaries
+                    string key = material + "_" + type;
+                    var tuple = new Tuple<ModKey, string>(ammoGetter.FormKey.ModKey, key.ToLower());
+
+                    // Create a new leveled item entry
+                    LeveledItemEntry ammoEntry = CreateNewLvlEntry(ammoGetter, 1, 1);
+
+                    // Add the entry also to the mod-independent dictionary
+                    leveledItemsToAdd.TryGetValue(key.ToLower(), out var hash);
+                    if (hash is null)
+                    {
+                        leveledItemsToAdd.TryAdd(key.ToLower(), new HashSet<LeveledItemEntry>() { ammoEntry });
+                    }
+                    else
+                    {
+                        hash.Add(ammoEntry);
+                    }
+
+                    count1++;
+                }
+                System.Console.WriteLine("Ammunition is done!");
+            }
+
+
+
+            /// Iterate on all weapons
             System.Console.WriteLine("Searching for weapons...");
             foreach (var weaponGetter in loadorder.WinningOverrides<IWeaponGetter>())
             {
