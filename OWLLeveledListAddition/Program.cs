@@ -617,6 +617,7 @@ namespace OWLLeveledListAddition
             Dictionary<Tuple<ModKey, string>, HashSet<LeveledItemEntry>> leveledItemsToAddPerMod = new();
 
 
+            // Weapons needing special treatment
             HashSet<LeveledItemEntry> falmerWeapons = new();
             HashSet<LeveledItemEntry> woodWeapons = new();
 
@@ -643,75 +644,100 @@ namespace OWLLeveledListAddition
                     // Ignore null
                     if (ammoRecipeGetter.Items is null) continue;
 
-                    // Ignore items that are not weapons
+                    // Ignore items that are not ammunition
                     var ammo = ammoRecipeGetter.CreatedObject.TryResolve<IAmmunitionGetter>(state.LinkCache);
                     if (ammo is null) continue;
 
+
                     HashSet<IKeywordGetter> keywords = new();
+                    IKeywordGetter? winningKeyword = null;
 
-                    // For each item needed to craft
-                    foreach (var item in ammoRecipeGetter.Items)
+                    // Dawnguard
+                    if (ammo.EditorID is not null && ammo.EditorID.Contains("dawnguard", StringComparison.OrdinalIgnoreCase))
                     {
-                        if(item.Item.Item is not null)
+                        winningKeyword = Dawnguard.Keyword.DLC1DawnguardItem.Resolve(state.LinkCache);
+                    }
+                    // Nordic
+                    else if (ammo.EditorID is not null && ammo.EditorID.Contains("nordic", StringComparison.OrdinalIgnoreCase))
+                    {
+                        winningKeyword = Dragonborn.Keyword.DLC2WeaponMaterialNordic.Resolve(state.LinkCache);
+                    }
+                    // Imperial
+                    else if (ammo.EditorID is not null && ammo.EditorID.Contains("imperial", StringComparison.OrdinalIgnoreCase))
+                    {
+                        winningKeyword = Skyrim.Keyword.WeapMaterialImperial.Resolve(state.LinkCache);
+                    }
+                    // For all the rest, look into the materials for ingots
+                    else
+                    {
+                        // For each item needed to craft
+                        foreach (var item in ammoRecipeGetter.Items)
                         {
-                            FormLink<IKeywordGetter> k = GetKeywordFromMaterial(item.Item.Item.FormKey);
-                            var keyword = k.TryResolve(state.LinkCache);
-                            if (keyword is null) continue;
+                            if(item.Item.Item is not null)
+                            {
+                                FormLink<IKeywordGetter> k = GetKeywordFromMaterial(item.Item.Item.FormKey);
+                                var keyword = k.TryResolve(state.LinkCache);
+                                if (keyword is null) continue;
 
-                            keywords.Add(keyword);
+                                keywords.Add(keyword);
+                            }
+                        }
+
+                        // Ignore if there are no materials
+                        if (keywords.Count == 0) continue;
+
+                        winningKeyword = keywords.First();
+
+                        // If there are many keywords found... 
+                        if (keywords.Count > 1)
+                        {
+                            // Get the strongest weapon material
+                            if (keywords.Contains(Dawnguard.Keyword.DLC1WeapMaterialDragonbone.Resolve(state.LinkCache))) 
+                                winningKeyword = Dawnguard.Keyword.DLC1WeapMaterialDragonbone.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDaedric.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialDaedric.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Dragonborn.Keyword.DLC2WeaponMaterialStalhrim.Resolve(state.LinkCache))) 
+                                winningKeyword = Dragonborn.Keyword.DLC2WeaponMaterialStalhrim.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialEbony.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialEbony.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialGlass.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialGlass.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Dragonborn.Keyword.DLC2WeaponMaterialNordic.Resolve(state.LinkCache))) 
+                                winningKeyword = Dragonborn.Keyword.DLC2WeaponMaterialNordic.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialOrcish.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialOrcish.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialElven.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialElven.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDwarven.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialDwarven.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialImperial.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialImperial.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialSilver.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialSilver.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialSteel.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialSteel.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDraugrHoned.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialDraugrHoned.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialIron.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialIron.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialFalmer.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialFalmer.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDraugr.Resolve(state.LinkCache))) 
+                                winningKeyword = Skyrim.Keyword.WeapMaterialDraugr.Resolve(state.LinkCache);
                         }
                     }
 
-                    // Ignore if there are no materials
-                    if (keywords.Count == 0) continue;
+                    
 
-                    var winningKeyword = keywords.First();
-
-                    // If there are many keywords found... 
-                    if (keywords.Count > 1)
+                    // Add the keyword to the ammunition if it doesn't have it already
+                    if(!ammo.HasKeyword(winningKeyword))
                     {
-                        // Get the strongest weapon material
-                        if (keywords.Contains(Dawnguard.Keyword.DLC1WeapMaterialDragonbone.Resolve(state.LinkCache))) 
-                            winningKeyword = Dawnguard.Keyword.DLC1WeapMaterialDragonbone.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDaedric.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialDaedric.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Dragonborn.Keyword.DLC2WeaponMaterialStalhrim.Resolve(state.LinkCache))) 
-                            winningKeyword = Dragonborn.Keyword.DLC2WeaponMaterialStalhrim.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialEbony.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialEbony.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialGlass.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialGlass.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Dragonborn.Keyword.DLC2WeaponMaterialNordic.Resolve(state.LinkCache))) 
-                            winningKeyword = Dragonborn.Keyword.DLC2WeaponMaterialNordic.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialOrcish.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialOrcish.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialElven.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialElven.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDwarven.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialDwarven.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialImperial.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialImperial.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialSilver.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialSilver.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialSteel.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialSteel.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDraugrHoned.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialDraugrHoned.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialIron.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialIron.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialFalmer.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialFalmer.Resolve(state.LinkCache);
-                        else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDraugr.Resolve(state.LinkCache))) 
-                            winningKeyword = Skyrim.Keyword.WeapMaterialDraugr.Resolve(state.LinkCache);
-                    }
+                        var v = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammo);
 
-                    // Get the ammunition
-                    var v = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammo);
-
-                    // Add the new keyword
-                    v.Keywords ??= new();
-                    if(!v.Keywords.Contains(winningKeyword))
+                        // Add the new keyword
+                        v.Keywords ??= new();
                         v.Keywords.Add(winningKeyword);
+                    }
                 }
                 System.Console.WriteLine("Done fixing ammunition!");
             }
@@ -765,7 +791,7 @@ namespace OWLLeveledListAddition
                     {
                         material = "Forsworn";
                     }
-                    // Forsworn
+                    // Nordic
                     else if (ammoGetter.EditorID is not null && ammoGetter.EditorID.Contains("nordic", StringComparison.OrdinalIgnoreCase))
                     {
                         material = "Nordic";
@@ -828,10 +854,12 @@ namespace OWLLeveledListAddition
 
                     // Add the entry also to the mod-independent dictionary
                     leveledItemsToAdd.TryGetValue(key.ToLower(), out var hash);
+                    // If it does not exist yet, add it
                     if (hash is null)
                     {
                         leveledItemsToAdd.TryAdd(key.ToLower(), new HashSet<LeveledItemEntry>() { ammoEntry });
                     }
+                    // Otherwise, just add it to the existing one
                     else
                     {
                         hash.Add(ammoEntry);
@@ -1241,7 +1269,7 @@ namespace OWLLeveledListAddition
                     var count = split.Length;
 
                     // Check that the size of split 
-                    if (split.Length != 4) continue;
+                    if (split.Length != 4 && split.Length != 5) continue;
 
                     // Form the key
                     material = split[2];
@@ -1250,7 +1278,7 @@ namespace OWLLeveledListAddition
 
                     // Get the items to add to the list
                     leveledItemsToAdd.TryGetValue(key.ToLower(), out var hash);
-                    if (hash is null) continue;
+                    if (hash is null || hash.Count == 0) continue;
 
                     // Get the leveled list
                     var modifiedList = state.PatchMod.LeveledItems.GetOrAddAsOverride(lvlListGetter);
@@ -1271,6 +1299,11 @@ namespace OWLLeveledListAddition
                         }
                     }
 
+                    // Remove the Unused if there, in the EditorID
+                    if (split.Count() == 5 && split[4].Equals("unused", StringComparison.OrdinalIgnoreCase))
+                    {
+                        modifiedList.EditorID = modifiedList.EditorID?.Replace("_Unused", "");
+                    }
                 }
             }
 
