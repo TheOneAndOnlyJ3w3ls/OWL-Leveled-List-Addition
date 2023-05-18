@@ -61,14 +61,14 @@ namespace OWLLeveledListAddition
                 {
                     type = "2H";
                 }
-                else if (wpn.HasKeyword(Skyrim.Keyword.WeapTypeBow))
-                {
-                    type = "Bow";
-                }
-                else if (wpn.HasKeyword(Dawnguard.Keyword.WeapDwarvenCrossbow) 
+                else if (wpn.HasKeyword(Dawnguard.Keyword.WeapDwarvenCrossbow)
                             || (wpn.Data is not null && wpn.Data.AnimationType.Equals(WeaponAnimationType.Crossbow)))
                 {
                     type = "Crossbow";
+                }
+                else if (wpn.HasKeyword(Skyrim.Keyword.WeapTypeBow))
+                {
+                    type = "Bow";
                 }
                 
                 return type;
@@ -117,7 +117,7 @@ namespace OWLLeveledListAddition
                 {
                     k = Dragonborn.Keyword.DLC2WeaponMaterialStalhrim;
                 }
-                else if (material.Equals(Skyrim.Ingredient.DaedraHeart))
+                else if (material.Equals(Skyrim.Ingredient.DaedraHeart.FormKey))
                 {
                     k = Skyrim.Keyword.WeapMaterialDaedric;
                 }
@@ -371,12 +371,12 @@ namespace OWLLeveledListAddition
                                 winningKeyword = Skyrim.Keyword.WeapMaterialSteel.Resolve(state.LinkCache);
                             else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDraugrHoned.Resolve(state.LinkCache))) 
                                 winningKeyword = Skyrim.Keyword.WeapMaterialDraugrHoned.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialFalmer.Resolve(state.LinkCache)))
+                                winningKeyword = Skyrim.Keyword.WeapMaterialFalmer.Resolve(state.LinkCache);
+                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDraugr.Resolve(state.LinkCache)))
+                                winningKeyword = Skyrim.Keyword.WeapMaterialDraugr.Resolve(state.LinkCache);
                             else if (keywords.Contains(Skyrim.Keyword.WeapMaterialIron.Resolve(state.LinkCache))) 
                                 winningKeyword = Skyrim.Keyword.WeapMaterialIron.Resolve(state.LinkCache);
-                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialFalmer.Resolve(state.LinkCache))) 
-                                winningKeyword = Skyrim.Keyword.WeapMaterialFalmer.Resolve(state.LinkCache);
-                            else if (keywords.Contains(Skyrim.Keyword.WeapMaterialDraugr.Resolve(state.LinkCache))) 
-                                winningKeyword = Skyrim.Keyword.WeapMaterialDraugr.Resolve(state.LinkCache);
                         }
                     }
 
@@ -404,7 +404,7 @@ namespace OWLLeveledListAddition
                     if (ammoGetter.Keywords is null) continue;
 
                     // Ignore enchanted
-                    if (ammoGetter.Description is not null) continue;
+                    //if (ammoGetter.Description is not null && !ammoGetter.Description.Equals("")) continue;
 
                     // Ignore Legacy of the dragonborn items
                     if (DBM is not null && ammoGetter.FormKey.ModKey.Equals(DBM.ModKey)) continue;
@@ -418,6 +418,7 @@ namespace OWLLeveledListAddition
 
                     string material = "";
                     string type = "";
+                    short count = 1;
 
                     // Dawnguard
                     if (ammoGetter.HasKeyword(Dawnguard.Keyword.DLC1DawnguardItem))
@@ -487,6 +488,19 @@ namespace OWLLeveledListAddition
                         type = "Arrow";
                     }
 
+                    // Handle imperial ammunition
+                    if (material.Equals("Imperial") && type.Equals("Bolt"))
+                    {
+                        type = "MissileCrossbow";
+                        count = 20;
+                    }
+                    else if (material.Equals("Imperial") && type.Equals("Arrow"))
+                    {
+                        type = "MissileBow";
+                        count = 20;
+                    }
+
+
                     // Ignore if either the material or the type is null
                     if (material == "" || type == "")
                     {
@@ -503,7 +517,7 @@ namespace OWLLeveledListAddition
                     var tuple = new Tuple<ModKey, string>(ammoGetter.FormKey.ModKey, key.ToLower());
 
                     // Create a new leveled item entry
-                    LeveledItemEntry ammoEntry = CreateNewLvlEntry(ammoGetter, 1, 1);
+                    LeveledItemEntry ammoEntry = CreateNewLvlEntry(ammoGetter, count, 1);
 
                     // Add the entry also to the mod-independent dictionary
                     leveledItemsToAdd.TryGetValue(key.ToLower(), out var hash);
@@ -611,6 +625,16 @@ namespace OWLLeveledListAddition
                     material = "Imperial";
 
                     type = GetSpecialTypeFromKeywords(weaponGetter);
+
+                    // Handle ranged
+                    if(type.Equals("Crossbow"))
+                    {
+                        type = "MissileCrossbow";
+                    }
+                    else if(type.Equals("Bow"))
+                    {
+                        type = "MissileBow";
+                    }
                 }
                 // Alikr
                 else if (weaponGetter.EditorID is not null && (weaponGetter.EditorID.Contains("scimitar", StringComparison.OrdinalIgnoreCase)
@@ -906,6 +930,8 @@ namespace OWLLeveledListAddition
             System.Console.WriteLine("Created " + count3 + " new leveled lists!");
 
 
+            Dictionary<string, HashSet<LeveledItemEntry?>> rangedListsFixed = new();
+
             /// Iterate on OWL leveled lists
             System.Console.WriteLine("Starting to fill the OWL leveled lists...");
             foreach (var lvlListGetter in state.LoadOrder.PriorityOrder.Where(x => x.ModKey.Equals(OWL.ModKey)).WinningOverrides<ILeveledItemGetter>())
@@ -929,11 +955,59 @@ namespace OWLLeveledListAddition
                     type = split[3];
                     string key = material + "_" + type;
 
+
+                    // Place the modified leveled list in the appropriate list
+                    LeveledItemEntry? newEntry = null;
+                    string owlList = "OWL_" + split[1] + "_" + material + "_";
+                    short entryCount = 0;
+                    if (split[3].Equals("bow", StringComparison.OrdinalIgnoreCase))
+                    {
+                        owlList += "MissileBow";
+                        entryCount = 1;
+                    }
+                    else if (split[3].Equals("crossbow", StringComparison.OrdinalIgnoreCase))
+                    {
+                        owlList += "MissileCrossbow";
+                        entryCount = 1;
+                    }
+                    else if (split[3].Equals("arrow", StringComparison.OrdinalIgnoreCase))
+                    {
+                        owlList += "MissileBow";
+                        entryCount = 20;
+                    }
+                    else if (split[3].Equals("bolt", StringComparison.OrdinalIgnoreCase))
+                    {
+                        owlList += "MissileCrossbow";
+                        entryCount = 20;
+                    }
+                    else if (split[3].Equals("missilecrossbow", StringComparison.OrdinalIgnoreCase) || split[3].Equals("missilebow", StringComparison.OrdinalIgnoreCase))
+                    {
+                        owlList += "RangeAll";
+                        entryCount = 1;
+                    }
+
+                    if(entryCount > 0)
+                    {
+                        //var modList = state.PatchMod.LeveledItems.GetOrAddAsOverride(lvlListGetter);
+                        newEntry = CreateNewLvlEntry(lvlListGetter, entryCount, 1);
+
+                        if(rangedListsFixed.TryGetValue(owlList, out var hashEntries))
+                        {
+                            hashEntries.Add(newEntry);
+                        }
+                        else
+                        {
+                            rangedListsFixed.TryAdd(owlList, new() { newEntry });
+                        }
+                    }
+
                     // Get the items to add to the list
                     leveledItemsToAdd.TryGetValue(key.ToLower(), out var hash);
                     if (hash is null || hash.Count == 0) continue;
 
+
                     // Get the leveled list
+                    // Note: this will reset all leveled lists to OWL default
                     var modifiedList = state.PatchMod.LeveledItems.GetOrAddAsOverride(lvlListGetter);
 
                     // Add all items to the leveled lists, if not already present
@@ -953,14 +1027,46 @@ namespace OWLLeveledListAddition
                     }
 
                     // Remove the Unused if there, in the EditorID
-                    if (split.Count() == 5 && split[4].Equals("unused", StringComparison.OrdinalIgnoreCase))
+                    if (split.Length == 5 && split[4].Equals("unused", StringComparison.OrdinalIgnoreCase))
                     {
                         modifiedList.EditorID = modifiedList.EditorID?.Replace("_Unused", "");
                     }
                 }
             }
+            System.Console.WriteLine("Finished filling the OWL leveled lists!");
+
+            // Fix the ranged lists
+            System.Console.WriteLine("Fixing the OWL ranged leveled lists...");
+            foreach (var lvlListGetter in state.LoadOrder.PriorityOrder.Where(x => x.ModKey.Equals(OWL.ModKey)).WinningOverrides<ILeveledItemGetter>())
+            {
+                if (lvlListGetter.EditorID is null) continue;
+
+                if (rangedListsFixed.ContainsKey(lvlListGetter.EditorID.Replace("_Unused", "")))
+                {
+                    // Get the leveled list
+                    rangedListsFixed.TryGetValue(lvlListGetter.EditorID.Replace("_Unused", ""), out var fixedHashEntry);
+                    if (fixedHashEntry is null) continue;
+
+                    // Add each entry
+                    foreach (var fixedEntry in fixedHashEntry) 
+                    {
+                        if (fixedEntry is null) continue;
+
+                        if (lvlListGetter.Entries is not null && !lvlListGetter.Entries.Contains(fixedEntry))
+                        {
+                            var modifiedList = state.PatchMod.LeveledItems.GetOrAddAsOverride(lvlListGetter);
+                            modifiedList.Entries ??= new();
+                            modifiedList.Entries.Add(fixedEntry);
+
+                            // Remove the Unused if there, in the EditorID
+                            modifiedList.EditorID = modifiedList.EditorID?.Replace("_Unused", "");
+                        }
+                    }
+                }
+            }
 
             /// Handle falmer weapons
+            System.Console.WriteLine("Handling Falmer weapons...");
             var falmerlist = Skyrim.LeveledItem.LItemFalmerWeapon.TryResolve(state.LinkCache);
             if(falmerlist is not null) {
                 var list = state.PatchMod.LeveledItems.GetOrAddAsOverride(falmerlist);
@@ -973,6 +1079,7 @@ namespace OWLLeveledListAddition
             }
 
             /// Handle Wood weapons
+            System.Console.WriteLine("Handling Wood weapons...");
             // Create a whole new leveled list
             var woodlist = state.PatchMod.LeveledItems.AddNew();
 
