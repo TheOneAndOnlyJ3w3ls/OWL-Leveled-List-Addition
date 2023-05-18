@@ -499,6 +499,22 @@ namespace OWLLeveledListAddition
                         type = "MissileBow";
                         count = 20;
                     }
+                    // Stormcloak
+                    else if (ammoGetter.EditorID is not null && ammoGetter.EditorID.Contains("stormcloak", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (type.Equals("Bolt"))
+                        {
+                            material = "Stormcloaks";
+                            type = "MissileCrossbow";
+                            count = 20;
+                        }
+                        else if (type.Equals("Arrow"))
+                        {
+                            material = "Stormcloaks";
+                            type = "MissileBow";
+                            count = 20;
+                        }
+                    }
 
 
                     // Ignore if either the material or the type is null
@@ -707,7 +723,24 @@ namespace OWLLeveledListAddition
                             type = kw.EditorID.Replace("WeapType", "").Replace("VendorItem", "");
                         }
                     }
+                }
 
+                // Handle stormcloak ranged
+                if (weaponGetter.EditorID is not null && weaponGetter.EditorID.Contains("stormcloak", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Crossbow
+                    if (weaponGetter.HasKeyword(Dawnguard.Keyword.WeapDwarvenCrossbow)
+                            || (weaponGetter.Data is not null && weaponGetter.Data.AnimationType.Equals(WeaponAnimationType.Crossbow)))
+                    {
+                        material = "Stormcloaks";
+                        type = "MissileCrossbow";
+                    }
+                    // Bow
+                    else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapTypeBow))
+                    {
+                        material = "Stormcloaks";
+                        type = "MissileBow";
+                    }
                 }
 
                 // Ignore if either the material or the type is null
@@ -960,24 +993,25 @@ namespace OWLLeveledListAddition
                     LeveledItemEntry? newEntry = null;
                     string owlList = "OWL_" + split[1] + "_" + material + "_";
                     short entryCount = 0;
-                    if (split[3].Equals("bow", StringComparison.OrdinalIgnoreCase))
-                    {
-                        owlList += "MissileBow";
-                        entryCount = 1;
-                    }
-                    else if (split[3].Equals("crossbow", StringComparison.OrdinalIgnoreCase))
+                    
+                    if (split[3].Equals("crossbow", StringComparison.OrdinalIgnoreCase))
                     {
                         owlList += "MissileCrossbow";
                         entryCount = 1;
                     }
-                    else if (split[3].Equals("arrow", StringComparison.OrdinalIgnoreCase))
+                    else if (split[3].Equals("bow", StringComparison.OrdinalIgnoreCase))
                     {
                         owlList += "MissileBow";
-                        entryCount = 20;
+                        entryCount = 1;
                     }
                     else if (split[3].Equals("bolt", StringComparison.OrdinalIgnoreCase))
                     {
                         owlList += "MissileCrossbow";
+                        entryCount = 20;
+                    }
+                    else if (split[3].Equals("arrow", StringComparison.OrdinalIgnoreCase))
+                    {
+                        owlList += "MissileBow";
                         entryCount = 20;
                     }
                     else if (split[3].Equals("missilecrossbow", StringComparison.OrdinalIgnoreCase) || split[3].Equals("missilebow", StringComparison.OrdinalIgnoreCase))
@@ -1061,6 +1095,22 @@ namespace OWLLeveledListAddition
                             // Remove the Unused if there, in the EditorID
                             modifiedList.EditorID = modifiedList.EditorID?.Replace("_Unused", "");
                         }
+                        else if (lvlListGetter.Entries is null)
+                        {
+                            var modifiedList = state.PatchMod.LeveledItems.GetOrAddAsOverride(lvlListGetter);
+                            modifiedList.Entries ??= new();
+                            modifiedList.Entries.Add(fixedEntry);
+
+                            // Remove the Unused if there, in the EditorID
+                            modifiedList.EditorID = modifiedList.EditorID?.Replace("_Unused", "");
+
+                            // Remove the Unused from the leveled list that just got added
+                            var f = fixedEntry.Data?.Reference.TryResolve<ILeveledItem>(state.LinkCache);
+                            if(f is not null && f.EditorID is not null)
+                                f.EditorID = f.EditorID.Replace("_Unused", "");
+                        }
+
+
                     }
                 }
             }
