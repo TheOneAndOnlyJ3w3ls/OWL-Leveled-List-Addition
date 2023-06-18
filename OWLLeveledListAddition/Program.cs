@@ -571,9 +571,6 @@ namespace OWLLeveledListAddition
                 // Ignore non playable
                 if (weaponGetter.Data is not null && weaponGetter.Data.Flags.HasFlag(WeaponData.Flag.NonPlayable)) continue;
 
-                // Ignore can't drop
-                if (weaponGetter.Data is not null && weaponGetter.Data.Flags.HasFlag(WeaponData.Flag.CantDrop)) continue;
-
                 // Ignore Legacy of the dragonborn items
                 if (DBM is not null && weaponGetter.FormKey.ModKey.Equals(DBM.ModKey)) continue;
 
