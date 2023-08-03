@@ -1,5 +1,7 @@
 {
   "IgnoreVanilla": true,
+  "DoAmmo": true,
+  "FixAmmoKeywords": true,
   "DoArmours": true,
   "DoShieldsOnly": true,
   "MinAmountLeveledList": 10,

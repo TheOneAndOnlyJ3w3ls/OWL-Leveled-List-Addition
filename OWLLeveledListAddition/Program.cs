@@ -29,6 +29,27 @@ namespace OWLLeveledListAddition
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
+            static LeveledItem CreateNewList(IPatcherState<ISkyrimMod, ISkyrimModGetter> state, string EditorID, bool useAll)
+            {
+                var lv = state.PatchMod.LeveledItems.AddNew();
+
+                // Set the new leveled list values
+                lv.EditorID = EditorID;
+                lv.ChanceNone = 0;
+                if(!useAll)
+                {
+                    lv.Flags = lv.Flags.SetFlag(LeveledItem.Flag.CalculateForEachItemInCount, true);
+                    lv.Flags = lv.Flags.SetFlag(LeveledItem.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer, true);
+                }
+                else
+                {
+                    lv.Flags = lv.Flags.SetFlag(LeveledItem.Flag.UseAll, true);
+                }
+                lv.Entries = new();
+
+                return lv;
+            }
+
             static LeveledItemEntry CreateNewLvlEntry(IMajorRecordGetter item, short count, short level)
             {
                 LeveledItemEntry entry = new()
@@ -395,6 +416,43 @@ namespace OWLLeveledListAddition
                 System.Console.WriteLine("Done fixing ammunition!");
             }
 
+            /// Create missing OWL lists
+            // Imperial
+            CreateNewList(state, "OWL_Weapon_Imperial_Bow", false);
+            CreateNewList(state, "OWL_Weapon_Imperial_Arrow", false);
+            CreateNewList(state, "OWL_Weapon_Imperial_Crossbow", false);
+            CreateNewList(state, "OWL_Weapon_Imperial_Bolt", false);
+
+            // Stormcloak
+            CreateNewList(state, "OWL_Weapon_Stormcloak_Bow", false);
+            CreateNewList(state, "OWL_Weapon_Stormcloak_Arrow", false);
+            CreateNewList(state, "OWL_Weapon_Stormcloak_Crossbow", false);
+            CreateNewList(state, "OWL_Weapon_Stormcloak_Bolt", false);
+
+            // Silver
+            CreateNewList(state, "OWL_Weapon_Silver_Bow", false);
+            CreateNewList(state, "OWL_Weapon_Silver_Arrow", false);
+            CreateNewList(state, "OWL_Weapon_Silver_Crossbow", false);
+            CreateNewList(state, "OWL_Weapon_Silver_Bolt", false);
+            CreateNewList(state, "OWL_Weapon_Silver_MissileBow", true);
+            CreateNewList(state, "OWL_Weapon_Silver_MissileCrossbow", true);
+            CreateNewList(state, "OWL_Weapon_Silver_RangeAll", false);
+
+            // Dawnguard
+            CreateNewList(state, "OWL_Weapon_Dawnguard_Bow", false);
+            CreateNewList(state, "OWL_Weapon_Dawnguard_Arrow", false);
+            CreateNewList(state, "OWL_Weapon_Dawnguard_MissileBow", true);
+
+            // Alikr
+            CreateNewList(state, "OWL_Weapon_Alikr_Bow", false);
+            CreateNewList(state, "OWL_Weapon_Alikr_Arrow", false);
+            CreateNewList(state, "OWL_Weapon_Alikr_Crossbow", false);
+            CreateNewList(state, "OWL_Weapon_Alikr_Bolt", false);
+            CreateNewList(state, "OWL_Weapon_Alikr_MissileBow", true);
+            CreateNewList(state, "OWL_Weapon_Alikr_MissileCrossbow", true);
+            CreateNewList(state, "OWL_Weapon_Alikr_RangeAll", false);
+
+
             if (Settings.DoAmmo)
             {
                 System.Console.WriteLine("Searching for ammunition...");
@@ -486,34 +544,6 @@ namespace OWLLeveledListAddition
                     else if (ammoGetter.HasKeyword(Skyrim.Keyword.VendorItemArrow))
                     {
                         type = "Arrow";
-                    }
-
-                    // Handle imperial ammunition
-                    if (material.Equals("Imperial") && type.Equals("Bolt"))
-                    {
-                        type = "MissileCrossbow";
-                        count = 20;
-                    }
-                    else if (material.Equals("Imperial") && type.Equals("Arrow"))
-                    {
-                        type = "MissileBow";
-                        count = 20;
-                    }
-                    // Stormcloak
-                    else if (ammoGetter.EditorID is not null && ammoGetter.EditorID.Contains("stormcloak", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (type.Equals("Bolt"))
-                        {
-                            material = "Stormcloaks";
-                            type = "MissileCrossbow";
-                            count = 20;
-                        }
-                        else if (type.Equals("Arrow"))
-                        {
-                            material = "Stormcloaks";
-                            type = "MissileBow";
-                            count = 20;
-                        }
                     }
 
 
@@ -638,16 +668,6 @@ namespace OWLLeveledListAddition
                     material = "Imperial";
 
                     type = GetSpecialTypeFromKeywords(weaponGetter);
-
-                    // Handle ranged
-                    if(type.Equals("Crossbow"))
-                    {
-                        type = "MissileCrossbow";
-                    }
-                    else if(type.Equals("Bow"))
-                    {
-                        type = "MissileBow";
-                    }
                 }
                 // Alikr
                 else if (weaponGetter.EditorID is not null && (weaponGetter.EditorID.Contains("scimitar", StringComparison.OrdinalIgnoreCase)
@@ -719,24 +739,6 @@ namespace OWLLeveledListAddition
 
                             type = kw.EditorID.Replace("WeapType", "").Replace("VendorItem", "");
                         }
-                    }
-                }
-
-                // Handle stormcloak ranged
-                if (weaponGetter.EditorID is not null && weaponGetter.EditorID.Contains("stormcloak", StringComparison.OrdinalIgnoreCase))
-                {
-                    // Crossbow
-                    if (weaponGetter.HasKeyword(Dawnguard.Keyword.WeapDwarvenCrossbow)
-                            || (weaponGetter.Data is not null && weaponGetter.Data.AnimationType.Equals(WeaponAnimationType.Crossbow)))
-                    {
-                        material = "Stormcloaks";
-                        type = "MissileCrossbow";
-                    }
-                    // Bow
-                    else if (weaponGetter.HasKeyword(Skyrim.Keyword.WeapTypeBow))
-                    {
-                        material = "Stormcloaks";
-                        type = "MissileBow";
                     }
                 }
 
@@ -964,7 +966,7 @@ namespace OWLLeveledListAddition
 
             /// Iterate on OWL leveled lists
             System.Console.WriteLine("Starting to fill the OWL leveled lists...");
-            foreach (var lvlListGetter in state.LoadOrder.PriorityOrder.Where(x => x.ModKey.Equals(OWL.ModKey)).WinningOverrides<ILeveledItemGetter>())
+            foreach (var lvlListGetter in state.LoadOrder.PriorityOrder.Where(x => x.ModKey.Equals(OWL.ModKey) || x.ModKey.Equals(state.PatchMod.ModKey)).WinningOverrides<ILeveledItemGetter>())
             {
                 if (lvlListGetter.EditorID is null) continue;
 
@@ -1021,7 +1023,6 @@ namespace OWLLeveledListAddition
                     {
                         //var modList = state.PatchMod.LeveledItems.GetOrAddAsOverride(lvlListGetter);
                         newEntry = CreateNewLvlEntry(lvlListGetter, entryCount, 1);
-
                         if(rangedListsFixed.TryGetValue(owlList, out var hashEntries))
                         {
                             hashEntries.Add(newEntry);
@@ -1068,7 +1069,7 @@ namespace OWLLeveledListAddition
 
             // Fix the ranged lists
             System.Console.WriteLine("Fixing the OWL ranged leveled lists...");
-            foreach (var lvlListGetter in state.LoadOrder.PriorityOrder.Where(x => x.ModKey.Equals(OWL.ModKey)).WinningOverrides<ILeveledItemGetter>())
+            foreach (var lvlListGetter in state.LoadOrder.PriorityOrder.Where(x => x.ModKey.Equals(OWL.ModKey) || x.ModKey.Equals(state.PatchMod.ModKey)).WinningOverrides<ILeveledItemGetter>())
             {
                 if (lvlListGetter.EditorID is null) continue;
 
