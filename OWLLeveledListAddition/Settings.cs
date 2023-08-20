@@ -55,5 +55,8 @@ namespace OWLLeveledListAddition
         [Tooltip("These armours will NOT be added into OWL leveled lists")]
         public HashSet<FormLink<IArmorGetter>> BlacklistedArmours = new();
 
+        [SettingName("Blacklisted ammunition")]
+        [Tooltip("These arrows/bolts will NOT be added into OWL leveled lists")]
+        public HashSet<FormLink<IAmmunitionGetter>> BlacklistedAmmo = new();
     }
 }

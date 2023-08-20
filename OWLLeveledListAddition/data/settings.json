@@ -9,6 +9,6 @@
   "BlacklistedMods": [
     "LegacyoftheDragonborn.esm"
   ],
-  "BlacklistedWeapons": [],
-  "BlacklistedArmours": []
+    "BlacklistedArmours": [],
+    "BlacklistedAmmo": []
 }

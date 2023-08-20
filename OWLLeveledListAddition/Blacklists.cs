@@ -380,5 +380,42 @@ namespace OWLLeveledListAddition
         {
             weaponBlacklist = value;
         }
+
+        private static HashSet<FormKey> ammoBlacklist = new()
+        {
+            Skyrim.Ammunition.boundArrow.FormKey,
+            Skyrim.Ammunition.dunArcherPracticeArrow.FormKey,
+            Skyrim.Ammunition.dunGeirmundSigdisArrowsIllusion.FormKey,
+            Skyrim.Ammunition.dunJaphetsFollyCWCatapultAmmo.FormKey,
+            Skyrim.Ammunition.CWArrow.FormKey,
+            Skyrim.Ammunition.CWArrowShort.FormKey,
+            Skyrim.Ammunition.CWCatapultAmmo.FormKey,
+            Skyrim.Ammunition.FXDustDropAmmoMed.FormKey,
+            Skyrim.Ammunition.FXDustDropAmmoSm.FormKey,
+            Skyrim.Ammunition.FXDustDropAmmoTiny.FormKey,
+            Skyrim.Ammunition.MQ101SteelArrow.FormKey,
+            Skyrim.Ammunition.TrapDweBallistaBoltAmmo01.FormKey,
+            Skyrim.Ammunition.TrapDweBallistaBoltAmmo02.FormKey,
+            Skyrim.Ammunition.TrapDweBallistaBoltAmmo03.FormKey,
+            Skyrim.Ammunition.TrapDweBallistaBoltAmmo04.FormKey,
+            Skyrim.Ammunition.TrapDweBallistaBoltAmmo05.FormKey,
+            Skyrim.Ammunition.TrapDweBallistaBoltAmmo06.FormKey,
+            Skyrim.Ammunition.TrapDart.FormKey,
+            Dawnguard.Ammunition.DLC1ElderScrollBack.FormKey,
+            Dawnguard.Ammunition.TestDLC1Bolt.FormKey,
+            Dawnguard.Ammunition.DLC1SoulCairnKeeperArrow.FormKey,
+            Dragonborn.Ammunition.DLC2DwarvenBallistaBolt.FormKey,
+            Dragonborn.Ammunition.DLC2BloodskalAmmo.FormKey
+        };
+
+        public static HashSet<FormKey> GetAmmoBlacklist()
+        {
+            return ammoBlacklist;
+        }
+
+        public static void SetAmmoBlacklist(HashSet<FormKey> value)
+        {
+            ammoBlacklist = value;
+        }
     }
 }

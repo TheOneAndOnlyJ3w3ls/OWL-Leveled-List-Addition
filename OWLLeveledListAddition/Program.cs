@@ -167,6 +167,7 @@ namespace OWLLeveledListAddition
 
             // Initialise the blacklists
             var weaponBlacklist = Blacklists.GetArmourBlacklist();
+            var ammoBlacklist = Blacklists.GetAmmoBlacklist();
             var armourBlacklist = Blacklists.GetWeaponBlacklist();
             foreach (var weapon in Settings.BlacklistedWeapons)
             {
@@ -177,6 +178,11 @@ namespace OWLLeveledListAddition
             {
                 if(armour is not null)
                     armourBlacklist.Add(armour.FormKey);
+            }
+            foreach (var ammo in Settings.BlacklistedAmmo)
+            {
+                if (ammo is not null)
+                    ammoBlacklist.Add(ammo.FormKey);
             }
 
             // Vanilla mods
@@ -472,6 +478,9 @@ namespace OWLLeveledListAddition
 
                     // Ignore the blacklisted mods
                     if (Settings.BlacklistedMods.Contains(ammoGetter.FormKey.ModKey)) continue;
+
+                    // Ignore blacklisted ammo
+                    if (ammoBlacklist.Contains(ammoGetter.FormKey)) continue;
 
 
                     string material = "";
