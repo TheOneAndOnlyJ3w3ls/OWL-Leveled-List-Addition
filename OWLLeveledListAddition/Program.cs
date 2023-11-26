@@ -309,10 +309,18 @@ namespace OWLLeveledListAddition
             }
 
             // Ignore blacklisted mods
-            if(Settings.BlacklistedMods.Count > 0)
+            if(!Settings.IsWhitelist && Settings.ListedMods.Count > 0)
             {
-                loadorder = loadorder.Where(x => !Settings.BlacklistedMods.Contains(x.ModKey));
+                loadorder = loadorder.Where(x => !Settings.ListedMods.Contains(x.ModKey));
             }
+            // Make the Whitelist
+            else if(Settings.IsWhitelist && Settings.ListedMods.Count > 0)
+            {
+                loadorder = loadorder.Where(x => Settings.ListedMods.Contains(x.ModKey));
+            }
+
+            // Invert the load order, to see the original mod first (removing the need to blacklist patches)
+            loadorder = loadorder.Reverse();
 
 
             // Ammunition
@@ -327,7 +335,6 @@ namespace OWLLeveledListAddition
                     // Ignore items that are not ammunition
                     var ammo = ammoRecipeGetter.CreatedObject.TryResolve<IAmmunitionGetter>(state.LinkCache);
                     if (ammo is null) continue;
-
 
                     HashSet<IKeywordGetter> keywords = new();
                     IKeywordGetter? winningKeyword = null;
@@ -477,7 +484,7 @@ namespace OWLLeveledListAddition
                     if (Settings.IgnoreVanilla && vanillaMods.Contains(ammoGetter.FormKey.ModKey)) continue;
 
                     // Ignore the blacklisted mods
-                    if (Settings.BlacklistedMods.Contains(ammoGetter.FormKey.ModKey)) continue;
+                    if (!Settings.IsWhitelist && Settings.ListedMods.Contains(ammoGetter.FormKey.ModKey)) continue;
 
                     // Ignore blacklisted ammo
                     if (ammoBlacklist.Contains(ammoGetter.FormKey)) continue;
@@ -612,13 +619,14 @@ namespace OWLLeveledListAddition
 
                 // Ignore Legacy of the dragonborn items
                 if (DBM is not null && weaponGetter.FormKey.ModKey.Equals(DBM.ModKey)) continue;
-
+                if (weaponGetter.EditorID is not null && weaponGetter.EditorID.Contains("replica", StringComparison.OrdinalIgnoreCase)) continue;
+                if (weaponGetter.Name is not null && weaponGetter.Name.String is not null && weaponGetter.Name.String.Contains("replica",StringComparison.OrdinalIgnoreCase)) continue;
 
                 // Ignore vanilla
                 if (Settings.IgnoreVanilla && vanillaMods.Contains(weaponGetter.FormKey.ModKey)) continue;
 
                 // Ignore the blacklisted mods
-                if (Settings.BlacklistedMods.Contains(weaponGetter.FormKey.ModKey)) continue;
+                if (!Settings.IsWhitelist && Settings.ListedMods.Contains(weaponGetter.FormKey.ModKey)) continue;
 
                 // Ignore blacklisted weapons
                 if (weaponBlacklist.Contains(weaponGetter.FormKey)) continue;
@@ -833,13 +841,14 @@ namespace OWLLeveledListAddition
 
                     // Ignore Legacy of the dragonborn items
                     if (DBM is not null && armourGetter.FormKey.ModKey.Equals(DBM.ModKey)) continue;
-
+                    if (armourGetter.EditorID is not null && armourGetter.EditorID.Contains("replica", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (armourGetter.Name is not null && armourGetter.Name.String is not null && armourGetter.Name.String.Contains("replica", StringComparison.OrdinalIgnoreCase)) continue;
 
                     // Ignore vanilla
                     if (Settings.IgnoreVanilla && vanillaMods.Contains(armourGetter.FormKey.ModKey)) continue;
 
                     // Ignore the blacklisted mods
-                    if (Settings.BlacklistedMods.Contains(armourGetter.FormKey.ModKey)) continue;
+                    if (!Settings.IsWhitelist && Settings.ListedMods.Contains(armourGetter.FormKey.ModKey)) continue;
 
                     // Ignore blacklisted armours
                     if (armourBlacklist.Contains(armourGetter.FormKey)) continue;
@@ -923,7 +932,7 @@ namespace OWLLeveledListAddition
                 if (lvlentry.Value.Count > Settings.MinAmountLeveledList)
                 {
                     // Create a whole new leveled list
-                    var lv = state.PatchMod.LeveledItems.AddNew();
+                    var lv = state.PatchMod.LeveledItems.AddNew(state.PatchMod.GetNextFormKey());
                     
                     // Check if it is a weapon or armour
                     var t1 = lvlentry.Value.First().Data?.Reference.TryResolve<IWeaponGetter>(state.LinkCache);
@@ -936,7 +945,7 @@ namespace OWLLeveledListAddition
                         recordType = "Weapon_";
                     }           
 
-                    // Set the new leveled list values
+                    // Create a new leveled list with only the mod records
                     lv.EditorID = "OWL_" + recordType + lvlentry.Key.Item2 + "_" + lvlentry.Key.Item1.Name.ToLower();
                     lv.ChanceNone = 0;
                     lv.Flags.SetFlag(LeveledItem.Flag.CalculateForEachItemInCount, true);
@@ -956,13 +965,14 @@ namespace OWLLeveledListAddition
                     }
 
                     // Add the newly created leveled list to the the mod-independent list
-                    if (hash is null)
+                    if (hash.Count == 0)
                     {
                         leveledItemsToAdd.TryAdd(lvlentry.Key.Item2, new HashSet<LeveledItemEntry>() { entry });
                     }
                     else
                     {
                         hash.Add(entry);
+                        leveledItemsToAdd[lvlentry.Key.Item2] = hash;
                     }
 
                     count3++;
@@ -990,6 +1000,9 @@ namespace OWLLeveledListAddition
 
                     // Check that the size of split 
                     if (split.Length != 4 && split.Length != 5) continue;
+
+                    // Ignore the newly created sublists for mod weapons
+                    if (split.Length == 5 && !split[4].Equals("unused", StringComparison.OrdinalIgnoreCase)) continue;
 
                     // Form the key
                     material = split[2];

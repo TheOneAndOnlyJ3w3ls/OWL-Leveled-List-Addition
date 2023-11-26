@@ -42,10 +42,16 @@ namespace OWLLeveledListAddition
         public bool Debug = false;
 
 
+        [SettingName("Are the mods below a whitelist?")]
+        [Tooltip("Tick to have the mods listed below be the ONLY ones considered. Leave unticked to consider every mod EXCEPT those listed below.")]
+        public bool IsWhitelist = false;
 
-        [SettingName("Blacklisted mods")]
+        [SettingName("Mods to whitelist/blacklist")]
         [Tooltip("These mods will be ignored by the patcher")]
-        public HashSet<ModKey> BlacklistedMods = new() { ModKey.FromNameAndExtension("LegacyoftheDragonborn.esm") };
+        public HashSet<ModKey> ListedMods = new() { ModKey.FromNameAndExtension("LegacyoftheDragonborn.esm"),
+                                                    ModKey.FromNameAndExtension("DBM_RelicNotifications.esp"),
+                                                    ModKey.FromNameAndExtension("Vigilant.esm"),
+                                                    ModKey.FromNameAndExtension("Ordinator - Perks of Skyrim.esp")};
 
         [SettingName("Blacklisted weapons")]
         [Tooltip("These weapons will NOT be added into OWL leveled lists")]

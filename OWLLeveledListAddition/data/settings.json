@@ -6,9 +6,13 @@
   "DoShieldsOnly": true,
   "MinAmountLeveledList": 10,
   "Debug": false,
-  "BlacklistedMods": [
-    "LegacyoftheDragonborn.esm"
+  "IsWhitelist": false,
+    "ListedMods": [
+        "LegacyoftheDragonborn.esm",
+        "DBM_RelicNotifications.esp"
+    ],
+  "BlacklistedWeapons": [
   ],
-    "BlacklistedArmours": [],
-    "BlacklistedAmmo": []
+  "BlacklistedArmours": [],
+  "BlacklistedAmmo": []
 }
