@@ -437,10 +437,10 @@ namespace OWLLeveledListAddition
             CreateNewList(state, "OWL_Weapon_Imperial_Bolt", false);
 
             // Stormcloak
-            CreateNewList(state, "OWL_Weapon_Stormcloak_Bow", false);
-            CreateNewList(state, "OWL_Weapon_Stormcloak_Arrow", false);
-            CreateNewList(state, "OWL_Weapon_Stormcloak_Crossbow", false);
-            CreateNewList(state, "OWL_Weapon_Stormcloak_Bolt", false);
+            CreateNewList(state, "OWL_Weapon_Stormcloaks_Bow", false);
+            CreateNewList(state, "OWL_Weapon_Stormcloaks_Arrow", false);
+            CreateNewList(state, "OWL_Weapon_Stormcloaks_Crossbow", false);
+            CreateNewList(state, "OWL_Weapon_Stormcloaks_Bolt", false);
 
             // Silver
             CreateNewList(state, "OWL_Weapon_Silver_Bow", false);
@@ -529,6 +529,11 @@ namespace OWLLeveledListAddition
                         || (ammoGetter.EditorID is not null && ammoGetter.EditorID.Contains("imperial", StringComparison.OrdinalIgnoreCase)))
                     {
                         material = "Imperial";
+                    }
+                    // Stormcleak
+                    else if (ammoGetter.EditorID is not null && ammoGetter.EditorID.Contains("stormcloak", StringComparison.OrdinalIgnoreCase))
+                    {
+                        material = "Stormcloaks";
                     }
                     // Falmer
                     else if (ammoGetter.HasKeyword(Skyrim.Keyword.WeapMaterialFalmer) || ammoGetter.HasKeyword(Skyrim.Keyword.WeapMaterialFalmerHoned))
@@ -686,6 +691,13 @@ namespace OWLLeveledListAddition
 
                     type = GetSpecialTypeFromKeywords(weaponGetter);
                 }
+                // Stormcloak
+                else if (weaponGetter.EditorID is not null && weaponGetter.EditorID.Contains("stormcloak", StringComparison.OrdinalIgnoreCase))
+                {
+                    material = "Stormcloaks";
+
+                    type = GetSpecialTypeFromKeywords(weaponGetter);
+                }
                 // Alikr
                 else if (weaponGetter.EditorID is not null && (weaponGetter.EditorID.Contains("scimitar", StringComparison.OrdinalIgnoreCase)
                                                                 || weaponGetter.EditorID.Contains("alikr", StringComparison.OrdinalIgnoreCase)
@@ -771,6 +783,11 @@ namespace OWLLeveledListAddition
                     if (Settings.Debug)
                         System.Console.WriteLine("> keywords not found: " + material + "/" + type);
                     continue;
+                }
+                // Fix crossbows if erronerous
+                else if(type == "Bow" && weaponGetter.Data is not null && weaponGetter.Data.AnimationType.Equals(WeaponAnimationType.Crossbow))
+                {
+                    type = "Crossbow";
                 }
 
                 if(Settings.Debug)
