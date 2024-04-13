@@ -166,9 +166,9 @@ namespace OWLLeveledListAddition
 
 
             // Initialise the blacklists
-            var weaponBlacklist = Blacklists.GetArmourBlacklist();
+            var weaponBlacklist = Blacklists.GetWeaponBlacklist();
             var ammoBlacklist = Blacklists.GetAmmoBlacklist();
-            var armourBlacklist = Blacklists.GetWeaponBlacklist();
+            var armourBlacklist = Blacklists.GetArmourBlacklist();
             foreach (var weapon in Settings.BlacklistedWeapons)
             {
                 if(weapon is not null)
