@@ -35,7 +35,7 @@ namespace OWLLeveledListAddition
 
                 // Set the new leveled list values
                 lv.EditorID = EditorID;
-                lv.ChanceNone = 0;
+                lv.ChanceNone = Percent.Zero;
                 if(!useAll)
                 {
                     lv.Flags = lv.Flags.SetFlag(LeveledItem.Flag.CalculateForEachItemInCount, true);
@@ -171,17 +171,17 @@ namespace OWLLeveledListAddition
             var armourBlacklist = Blacklists.GetArmourBlacklist();
             foreach (var weapon in Settings.BlacklistedWeapons)
             {
-                if(weapon is not null)
+                if(!weapon.IsNull)
                     weaponBlacklist.Add(weapon.FormKey);
             }
             foreach (var armour in Settings.BlacklistedArmours)
             {
-                if(armour is not null)
+                if(!armour.IsNull)
                     armourBlacklist.Add(armour.FormKey);
             }
             foreach (var ammo in Settings.BlacklistedAmmo)
             {
-                if (ammo is not null)
+                if (!ammo.IsNull)
                     ammoBlacklist.Add(ammo.FormKey);
             }
 
@@ -360,7 +360,7 @@ namespace OWLLeveledListAddition
                         // For each item needed to craft
                         foreach (var item in ammoRecipeGetter.Items)
                         {
-                            if(item.Item.Item is not null)
+                            if(!item.Item.Item.IsNull)
                             {
                                 FormLink<IKeywordGetter> k = GetKeywordFromMaterial(item.Item.Item.FormKey);
                                 var keyword = k.TryResolve(state.LinkCache);
@@ -964,7 +964,7 @@ namespace OWLLeveledListAddition
 
                     // Create a new leveled list with only the mod records
                     lv.EditorID = "OWL_" + recordType + lvlentry.Key.Item2 + "_" + lvlentry.Key.Item1.Name.ToLower();
-                    lv.ChanceNone = 0;
+                    lv.ChanceNone = Percent.Zero;
                     lv.Flags.SetFlag(LeveledItem.Flag.CalculateForEachItemInCount, true);
                     lv.Flags.SetFlag(LeveledItem.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer, true);
                     lv.Entries = new();
@@ -1172,7 +1172,7 @@ namespace OWLLeveledListAddition
 
             // Set the new leveled list values
             woodlist.EditorID = "OWL_Weapon_Wood_All";
-            woodlist.ChanceNone = 0;
+            woodlist.ChanceNone = Percent.Zero;
             woodlist.Flags.SetFlag(LeveledItem.Flag.CalculateForEachItemInCount, true);
             woodlist.Flags.SetFlag(LeveledItem.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer, true);
             woodlist.Entries = new();
