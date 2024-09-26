@@ -171,17 +171,17 @@ namespace OWLLeveledListAddition
             var armourBlacklist = Blacklists.GetArmourBlacklist();
             foreach (var weapon in Settings.BlacklistedWeapons)
             {
-                if(weapon is not null)
+                if(!weapon.IsNull)
                     weaponBlacklist.Add(weapon.FormKey);
             }
             foreach (var armour in Settings.BlacklistedArmours)
             {
-                if(armour is not null)
+                if(!armour.IsNull)
                     armourBlacklist.Add(armour.FormKey);
             }
             foreach (var ammo in Settings.BlacklistedAmmo)
             {
-                if (ammo is not null)
+                if (!ammo.IsNull)
                     ammoBlacklist.Add(ammo.FormKey);
             }
 
@@ -360,7 +360,7 @@ namespace OWLLeveledListAddition
                         // For each item needed to craft
                         foreach (var item in ammoRecipeGetter.Items)
                         {
-                            if(item.Item.Item is not null)
+                            if(!item.Item.Item.IsNull)
                             {
                                 FormLink<IKeywordGetter> k = GetKeywordFromMaterial(item.Item.Item.FormKey);
                                 var keyword = k.TryResolve(state.LinkCache);
