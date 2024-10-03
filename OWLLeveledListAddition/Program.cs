@@ -35,7 +35,7 @@ namespace OWLLeveledListAddition
 
                 // Set the new leveled list values
                 lv.EditorID = EditorID;
-                lv.ChanceNone = 0;
+                lv.ChanceNone = Noggog.Percent.Zero;
                 if(!useAll)
                 {
                     lv.Flags = lv.Flags.SetFlag(LeveledItem.Flag.CalculateForEachItemInCount, true);
@@ -964,7 +964,7 @@ namespace OWLLeveledListAddition
 
                     // Create a new leveled list with only the mod records
                     lv.EditorID = "OWL_" + recordType + lvlentry.Key.Item2 + "_" + lvlentry.Key.Item1.Name.ToLower();
-                    lv.ChanceNone = 0;
+                    lv.ChanceNone = Noggog.Percent.Zero;
                     lv.Flags.SetFlag(LeveledItem.Flag.CalculateForEachItemInCount, true);
                     lv.Flags.SetFlag(LeveledItem.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer, true);
                     lv.Entries = new();
@@ -1172,7 +1172,7 @@ namespace OWLLeveledListAddition
 
             // Set the new leveled list values
             woodlist.EditorID = "OWL_Weapon_Wood_All";
-            woodlist.ChanceNone = 0;
+            woodlist.ChanceNone = Noggog.Percent.Zero;
             woodlist.Flags.SetFlag(LeveledItem.Flag.CalculateForEachItemInCount, true);
             woodlist.Flags.SetFlag(LeveledItem.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer, true);
             woodlist.Entries = new();
