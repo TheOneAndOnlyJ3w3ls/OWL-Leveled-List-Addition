@@ -290,6 +290,9 @@ namespace OWLLeveledListAddition
 
             System.Console.WriteLine("Starting Patching!");
 
+            // Create a list of Ammo with keywords to fix
+            Dictionary<FormKey, HashSet<IKeywordGetter>> fixedAmmo = new();
+
             // Create a mod-independent list of entries to add to the OWL lists
             Dictionary<string, HashSet<LeveledItemEntry>> leveledItemsToAdd = new();
 
@@ -424,6 +427,17 @@ namespace OWLLeveledListAddition
                         // Add the new keyword
                         v.Keywords ??= new();
                         v.Keywords.Add(winningKeyword);
+
+                        if (fixedAmmo.TryGetValue(ammo.FormKey, out var kwds)) {
+                            kwds.Add(winningKeyword);
+                            fixedAmmo[ammo.FormKey] = kwds;
+                        }
+                        else
+                        {
+                            HashSet<IKeywordGetter> kwds2 = [];
+                            kwds2.Add(winningKeyword);
+                            fixedAmmo.Add(ammo.FormKey, kwds2);
+                        }
                     }
                 }
                 System.Console.WriteLine("Done fixing ammunition!");
@@ -471,8 +485,17 @@ namespace OWLLeveledListAddition
                 System.Console.WriteLine("Searching for ammunition...");
                 foreach (var ammoGetter in loadorder.WinningOverrides<IAmmunitionGetter>())
                 {
+                    // Fetch the fixed keywords, add the existing keywords
+                    if (!fixedAmmo.TryGetValue(ammoGetter.FormKey, out var kwds))
+                        kwds = [];
+
+                    if (ammoGetter.Keywords is not null)
+                        foreach (var kw in ammoGetter.Keywords)
+                            if(kw.TryResolve<IKeywordGetter>(state.LinkCache, out var k))
+                                kwds.Add(k);
+
                     // Ignore no keywords
-                    if (ammoGetter.Keywords is null) continue;
+                    if (kwds.Count == 0) continue;
 
                     // Ignore enchanted
                     //if (ammoGetter.Description is not null && !ammoGetter.Description.Equals("")) continue;
@@ -544,14 +567,13 @@ namespace OWLLeveledListAddition
                     else
                     {
                         // Search all keywords
-                        foreach (var keyword in ammoGetter.Keywords)
+                        foreach (var keyword in kwds)
                         {
                             if (weaponMaterialKeywords.Contains(keyword))
                             {
-                                var kw = keyword.TryResolve(state.LinkCache);
-                                if (kw is null || kw.EditorID is null) continue;
+                                if (keyword is null || keyword.EditorID is null) continue;
 
-                                material = kw.EditorID.Replace("DLC2WeaponMaterial", "").Replace("DLC1WeapMaterial", "").Replace("WeapMaterial", "");
+                                material = keyword.EditorID.Replace("DLC2WeaponMaterial", "").Replace("DLC1WeapMaterial", "").Replace("WeapMaterial", "");
                             }
                         }
 
